@@ -74,7 +74,7 @@ public class LexemaReader {
 
             return;
         }
-        // number
+        // semicolon
         else if (Pattern.matches(";", value)) {
             addCharToLexema(value);
             increaseIndex();
@@ -89,10 +89,27 @@ public class LexemaReader {
             goStatusFinal_3();
 
             return;
-        } // comment
+        }
+        // comment
         else if (value.equals("/")) {
             addCharToLexema(value);
             increaseIndex();
+
+            return;
+        }
+        // plus
+        else if (value.equals("+")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatus_10();
+
+            return;
+        }
+        // simple quotes
+        else if (value.equals("'")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatus_14();
 
             return;
         }
@@ -192,4 +209,69 @@ public class LexemaReader {
         setLexemaEmpty();
         initialize();
     }
+
+    private void goStatus_10() {
+        String value = readInputChar();
+
+        if (value.equals("+")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatusFinal_11();
+        } else if (value.equals("=")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatusFinal_12();
+        } else {
+            goStatusFinal_13();
+        }
+    }
+
+    private void goStatusFinal_11() {
+        lexemas.add(new Lexema(Token.TK_MA, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
+    private void goStatusFinal_12() {
+        lexemas.add(new Lexema(Token.TK_MI, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
+    private void goStatusFinal_13() {
+        lexemas.add(new Lexema(Token.TK_M, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
+    private void goStatus_14() {
+        String value = readInputChar();
+
+        if (!value.equals("")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatus_15();
+        }
+    }
+
+    private void goStatus_15() {
+        String value = readInputChar();
+
+        if (value.equals("'")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatusFinal_16();
+        }
+    }
+
+    private void goStatusFinal_16() {
+        lexemas.add(new Lexema(Token.TK_CH, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
 }
