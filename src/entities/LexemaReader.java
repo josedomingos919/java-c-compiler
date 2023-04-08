@@ -38,10 +38,6 @@ public class LexemaReader {
         index = index + 1;
     }
 
-    private void decreaseIndex() {
-        index--;
-    }
-
     private void setLexemaEmpty() {
         this.lexema = "";
     }
@@ -69,7 +65,24 @@ public class LexemaReader {
             goStatus_1();
 
             return;
-        } // open parent
+        }
+        // number
+        else if (Pattern.matches("[0-9]", value)) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatus_4();
+
+            return;
+        }
+        // number
+        else if (Pattern.matches(";", value)) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatusFinal_9();
+
+            return;
+        }
+        // open parent
         else if (value.equals("(")) {
             addCharToLexema(value);
             increaseIndex();
@@ -115,5 +128,68 @@ public class LexemaReader {
     }
 
     private void goStatus_4() {
+        do {
+            String value = readInputChar();
+
+            if (Pattern.matches("[0-9]", value)) {
+                addCharToLexema(value);
+                increaseIndex();
+            } else if (value.equals(".")) {
+                addCharToLexema(value);
+                increaseIndex();
+
+                goStatus_5();
+                break;
+            } else {
+                goStatusFinal_8();
+                break;
+            }
+        } while (true);
+    }
+
+    private void goStatus_5() {
+        String value = readInputChar();
+
+        if (Pattern.matches("[0-9]", value)) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatus_6();
+        }
+    }
+
+    private void goStatus_6() {
+        do {
+            String value = readInputChar();
+
+            if (Pattern.matches("[0-9]", value)) {
+                addCharToLexema(value);
+                increaseIndex();
+            } else {
+                break;
+            }
+        } while (true);
+
+        goStatusFinal_7();
+    }
+
+    private void goStatusFinal_7() {
+        lexemas.add(new Lexema(Token.TK_NF, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
+    private void goStatusFinal_8() {
+        lexemas.add(new Lexema(Token.TK_NI, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
+    private void goStatusFinal_9() {
+        lexemas.add(new Lexema(Token.TK_FDI, lexema));
+
+        setLexemaEmpty();
+        initialize();
     }
 }

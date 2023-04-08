@@ -1,7 +1,5 @@
 package app;
 
-import java.util.function.Function;
-
 import conts.consts;
 import entities.Input;
 import entities.Lexema;
@@ -35,7 +33,7 @@ public class Main {
         System.out.println("************ LEXEMA ******************\n");
 
         for (Lexema lexema : lexemaReader.getLexemas()) {
-            System.out.println(lexema.getLexema() + " : " + lexema.getToken());
+            System.out.println(lexema.getLexema() + "\t\t" + lexema.getToken());
         }
     }
 }
