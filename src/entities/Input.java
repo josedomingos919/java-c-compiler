@@ -1,10 +1,9 @@
 package entities;
 
 import java.io.File;
-import java.util.Scanner;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 
 public class Input {
     private String fileName = "";
@@ -27,19 +26,17 @@ public class Input {
         String content = "";
 
         try {
-            File myObj = new File(this.fileName);
-            Scanner myReader = new Scanner(myObj);
+            File file = new File(this.fileName);
+            FileInputStream fis = new FileInputStream(file);
+            byte[] data = new byte[(int) file.length()];
 
-            while (myReader.hasNextLine()) {
-                content += myReader.nextLine();
-            }
+            fis.read(data);
+            fis.close();
 
-            myReader.close();
+            content = new String(data, "UTF-8");
 
+        } catch (Exception s) {
             return content;
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
         }
 
         return content;
