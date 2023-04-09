@@ -31,4 +31,6 @@ public class Token {
     public static final String TK_FCH = "FEACHA_CHAVETA";
     public static final String TK_APR = "ABRE_PARENTES_RETOS";
     public static final String TK_FPR = "FECHA_PARENTES_RETOS";
+    public static final String TK_NOTI = "NAO IGUAL";
+    public static final String TK_EQUAL = "IGUAL";
 }

@@ -3,6 +3,8 @@ package entities;
 import java.util.ArrayList;
 import java.util.regex.*;
 
+import conts.consts;
+
 public class LexemaReader {
 
     private int index;
@@ -90,6 +92,14 @@ public class LexemaReader {
 
             return;
         }
+        // not
+        else if (Pattern.matches("!", value)) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatus_42();
+
+            return;
+        }
         // open parent
         else if (value.equals("(")) {
             addCharToLexema(value);
@@ -138,7 +148,6 @@ public class LexemaReader {
 
             return;
         }
-
         // comment
         else if (value.equals("/")) {
             addCharToLexema(value);
@@ -345,7 +354,11 @@ public class LexemaReader {
     private void goStatus_14() {
         String value = readInputChar();
 
-        if (!value.equals("")) {
+        if (value.equals("\\")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatus_41();
+        } else if (!value.equals("")) {
             addCharToLexema(value);
             increaseIndex();
             goStatus_15();
@@ -584,4 +597,41 @@ public class LexemaReader {
         setLexemaEmpty();
         initialize();
     }
+
+    private void goStatus_41() {
+        String value = readInputChar();
+
+        if (consts.SPECIAL_CHAR.contains(value)) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatus_15();
+        }
+    }
+
+    private void goStatus_42() {
+        String value = readInputChar();
+
+        if (value.equals("=")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatusFinal_43();
+        } else {
+            goStatusFinal_44();
+        }
+    }
+
+    private void goStatusFinal_43() {
+        lexemas.add(new Lexema(Token.TK_NOTI, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
+    private void goStatusFinal_44() {
+        lexemas.add(new Lexema(Token.TK_EQUAL, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
 }
