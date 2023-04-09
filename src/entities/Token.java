@@ -24,8 +24,8 @@ public class Token {
     public static final String TK_MAIOR = "MAIOR";
     public static final String TK_MAIOI = "MAIOR_IGUAL";
     public static final String TK_MAIORM = "MAIOR_MAIOR";
-    public static final String TK_ASTI = "ASTERISTICO_IGUAL";
-    public static final String TK_AST = "ASTERISTICO";
+    public static final String TK_ASTI = "MULTIPLICACAO_IGUAL";
+    public static final String TK_AST = "MULTIPLICACAO";
     public static final String TK_IG = "IGUAL";
     public static final String TK_ABC = "ABRE_CHAVETA";
     public static final String TK_FCH = "FEACHA_CHAVETA";
@@ -33,4 +33,11 @@ public class Token {
     public static final String TK_FPR = "FECHA_PARENTES_RETOS";
     public static final String TK_NOTI = "NAO IGUAL";
     public static final String TK_EQUAL = "IGUAL";
+    public static final String TK_BAREQ = "DIVISAO IGUAL";
+    public static final String TK_DIV = "DIVISAO";
+    public static final String TK_COMMENT = "COMENTARIO";
+    public static final String TK_COMMENTP = "COMENTARIO_PARAGRAFO";
+    public static final String TK_VIR = "VIRGULA";
+    public static final String TK_DOISP = "DOIS_PONTOS";
+    public static final String TK_PDE = "PONTO_DE_EXCLAMACAO";
 }

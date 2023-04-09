@@ -100,6 +100,14 @@ public class LexemaReader {
 
             return;
         }
+        // comment
+        else if (Pattern.matches("/", value)) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatus_45();
+
+            return;
+        }
         // open parent
         else if (value.equals("(")) {
             addCharToLexema(value);
@@ -148,18 +156,35 @@ public class LexemaReader {
 
             return;
         }
-        // comment
-        else if (value.equals("/")) {
-            addCharToLexema(value);
-            increaseIndex();
-
-            return;
-        }
         // plus
         else if (value.equals("+")) {
             addCharToLexema(value);
             increaseIndex();
             goStatus_10();
+
+            return;
+        }
+        // comma
+        else if (value.equals(",")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatusFinal_53();
+
+            return;
+        }
+        // to points
+        else if (value.equals(":")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatusFinal_54();
+
+            return;
+        }
+        // exclamation match
+        else if (value.equals("?")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatusFinal_55();
 
             return;
         }
@@ -211,8 +236,9 @@ public class LexemaReader {
 
             return;
         }
-        // ignore \n \t \b \r \f \\
-        else if (value.equals("\n") || value.equals("\t") || value.equals("\b") || value.equals("\f")
+        // ignore \n \t \b \r \f \\ espaço em branco
+        else if (value.equals(" ") || value.equals("\n") || value.equals("\t") || value.equals("\b")
+                || value.equals("\f")
                 || value.equals("\r") || value.equals("\\")) {
             increaseIndex();
             initialize();
@@ -629,6 +655,132 @@ public class LexemaReader {
 
     private void goStatusFinal_44() {
         lexemas.add(new Lexema(Token.TK_EQUAL, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
+    private void goStatus_45() {
+        String value = readInputChar();
+
+        if (value.equals("=")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatusFinal_46();
+        } else if (value.equals("/")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatus_48();
+        } else if (value.equals("*")) {
+            addCharToLexema(value);
+            increaseIndex();
+            goStatus_50();
+        } else {
+            goStatusFinal_47();
+        }
+    }
+
+    private void goStatusFinal_46() {
+        lexemas.add(new Lexema(Token.TK_BAREQ, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
+    private void goStatusFinal_47() {
+        lexemas.add(new Lexema(Token.TK_DIV, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
+    private void goStatus_48() {
+        do {
+            String value = readInputChar();
+
+            if (value.equals("\r")) {
+                increaseIndex();
+            } else if (!value.equals("\n") && !value.equals("")) {
+                addCharToLexema(value);
+                increaseIndex();
+            } else {
+                break;
+            }
+        } while (true);
+
+        goStatusFinal_49();
+    }
+
+    private void goStatusFinal_49() {
+        lexemas.add(new Lexema(Token.TK_COMMENT, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
+    private void goStatus_50() {
+        do {
+            String value = readInputChar();
+
+            if (!value.equals("*")) {
+                addCharToLexema(value);
+                increaseIndex();
+            } else {
+                addCharToLexema(value);
+                increaseIndex();
+                goStatus_51();
+
+                break;
+            }
+        } while (true);
+    }
+
+    private void goStatus_51() {
+        do {
+            String value = readInputChar();
+
+            if (value.equals("*")) {
+                addCharToLexema(value);
+                increaseIndex();
+            } else if (value.equals("/")) {
+                addCharToLexema(value);
+                increaseIndex();
+                goStatusFinal_52();
+
+                break;
+            } else {
+                addCharToLexema(value);
+                increaseIndex();
+                goStatus_50();
+
+                break;
+            }
+        } while (true);
+    }
+
+    private void goStatusFinal_52() {
+        lexemas.add(new Lexema(Token.TK_COMMENTP, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
+    private void goStatusFinal_53() {
+        lexemas.add(new Lexema(Token.TK_VIR, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
+    private void goStatusFinal_54() {
+        lexemas.add(new Lexema(Token.TK_DOISP, lexema));
+
+        setLexemaEmpty();
+        initialize();
+    }
+
+    private void goStatusFinal_55() {
+        lexemas.add(new Lexema(Token.TK_PDE, lexema));
 
         setLexemaEmpty();
         initialize();
