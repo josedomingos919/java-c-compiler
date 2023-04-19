@@ -4,6 +4,7 @@ import conts.consts;
 import entities.Input;
 import entities.Lexema;
 import entities.LexemaReader;
+import java.util.Formatter; 
 
 public class Main {
     private static char[] input;
@@ -30,10 +31,13 @@ public class Main {
     }
 
     private static void printLexemas() {
-        System.out.println("************ LEXEMAS ******************\n");
+        Formatter fmt = new Formatter();  
+        fmt.format("%40s %40s %40s\n\n", "LEXEMA", "TOKEN", "LINHA");
 
         for (Lexema lexema : lexemaReader.getLexemas()) {
-            System.out.println("[ Lexema: " + lexema.getLexema() + " ] \t\t\t [ Token: " + lexema.getToken() + " ] \t\t\t [ Linha: " + lexema.getLine() + " ]");
+            fmt.format("%40s %40s %40s\n\n", lexema.getLexema(), lexema.getToken(), lexema.getLine()); 
         }
+
+        System.out.println(fmt);
     }
 }

@@ -1,57 +1,15 @@
-#define TKdjd536 "jekhfhdjdf"
-#include <stdio.h>
-#include "stdlib.h"
+#include "stdio.h"
+#include <stdlib.h>
 
-[]
-()
-{}
-.
-->
-++
---
-&
-*
-+
--
-~
-!
-/
-%
-<<
->>
-<>
-<=
->=
-==
-!= 
-^
-|
-&&
-||
-?
-:
-;
-...
-=
-*=
-/=
-%=
-+=
--=
-<<=
->>=
-&=
-^=
-|=
-,
-#
-##
-<:
-:>
-<%
-%>
-%:
-%:%:
-"dskfhsd2f"
-'a'
-'\n'
+#define criador "jose"
+
+int main () {
+	int a = 0;
+	char c = '\n';
+
+	//incrementando
+	a += 1;
+
+	/* retornando 0 */
+	return 0;
+}

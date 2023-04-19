@@ -63,4 +63,7 @@ public class Token {
     public static final String TK_PERCMAIOR = "PERCENTAGEM_MAIOR";
     public static final String TK_PERPOINT = "PERCENTAGEM_DOIS_PONTO";
     public static final String TK_PERCT2 = "DUPLA PERCENTAGEM DOIS PONTO";
+    public static final String TK_KEYWORD = "PALAVRA_RESERVADA";
+    public static final String TK_DIRECTIV = "DIRECTIVA";
+    public static final String TK_VAR = "VARIAVEL";
 }
