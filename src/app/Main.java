@@ -30,10 +30,10 @@ public class Main {
     }
 
     private static void printLexemas() {
-        System.out.println("************ LEXEMA ******************\n");
+        System.out.println("************ LEXEMAS ******************\n");
 
         for (Lexema lexema : lexemaReader.getLexemas()) {
-            System.out.println(lexema.getLexema() + "\t\t" + lexema.getToken());
+            System.out.println("[ Lexema: " + lexema.getLexema() + " ] \t\t\t [ Token: " + lexema.getToken() + " ] \t\t\t [ Linha: " + lexema.getLine() + " ]");
         }
     }
 }

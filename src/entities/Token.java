@@ -40,4 +40,27 @@ public class Token {
     public static final String TK_VIR = "VIRGULA";
     public static final String TK_DOISP = "DOIS_PONTOS";
     public static final String TK_PDE = "PONTO_DE_EXCLAMACAO";
+    public static final String TK_PONT = "PONTO";
+    public static final String TK_AND = "E";
+    public static final String TK_TIL = "TIL";
+    public static final String TK_PERCENT = "PERCENTAGEM";
+    public static final String TK_POW = "POTENCIA";
+    public static final String TK_BAR = "UMA_BARRA_DIREITA";
+    public static final String TK_CARD = "CARDINAL";
+    public static final String TK_MMIG = "MAIOR_MAIOR_IGUA";
+    public static final String TK_MEMEIG = "MENOR_MENOR_IGUAL";
+    public static final String TK_OR = "OU";
+    public static final String TK_ANDAND = "E_E";
+    public static final String TK_CARDC = "CARDINAL_CARDINAL";
+    public static final String TK_IGIG = "IGUAL_IGUAL";
+    public static final String TK_PPP = "PONTO_PONTO_PONTO";
+    public static final String TK_PIG = "PERCENTAGEM_IGUAL";
+    public static final String TK_ANDE = "E_IGUAL";
+    public static final String TK_POIG = "POTENCIA_IGUAL";
+    public static final String TK_BARIG = "BARRA_IGUAL";
+    public static final String TK_MENPOIN = "MENOR_DOIS_PONTO";
+    public static final String TK_MENPERC = "MENOR_PERCENTAGEM";
+    public static final String TK_PERCMAIOR = "PERCENTAGEM_MAIOR";
+    public static final String TK_PERPOINT = "PERCENTAGEM_DOIS_PONTO";
+    public static final String TK_PERCT2 = "DUPLA PERCENTAGEM DOIS PONTO";
 }
