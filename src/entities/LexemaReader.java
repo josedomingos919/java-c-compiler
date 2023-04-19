@@ -1,7 +1,7 @@
 package entities;
 
 import conts.Directives;
-import conts.consts;
+import conts.Consts;
 import java.util.ArrayList;
 import java.util.regex.*;
 import conts.Keywords;
@@ -58,7 +58,7 @@ public class LexemaReader {
         return this.lexemas;
     }
 
-    public void showError(String error){
+    public void showError(String error) {
         System.out.println("ERRO: na linha " + line + ", " + error);
     }
 
@@ -90,7 +90,7 @@ public class LexemaReader {
 
             return;
         }
-        //one bar
+        // one bar
         else if (value.equals("|")) {
             addCharToLexema(value);
             increaseIndex();
@@ -306,14 +306,12 @@ public class LexemaReader {
             return;
         }
         // ignore \n \t \b \r \f \\ espaço em branco
-        else if (
-            value.equals(" ") 
-            || value.equals("\t") 
-            || value.equals("\b")
-            || value.equals("\f")
-            || value.equals("\r") 
-            || value.equals("\\")
-        ){
+        else if (value.equals(" ")
+                || value.equals("\t")
+                || value.equals("\b")
+                || value.equals("\f")
+                || value.equals("\r")
+                || value.equals("\\")) {
             increaseIndex();
             initialize();
             return;
@@ -329,13 +327,11 @@ public class LexemaReader {
             addCharToLexema(value);
             increaseIndex();
             goStatus_1();
-        }
-        else if (lexema.equals("main")) {
+        } else if (lexema.equals("main")) {
             goStatusFinal_106();
-        }
-        else if (Keywords.KEYS.contains( this.lexema)) {
+        } else if (Keywords.KEYS.contains(this.lexema)) {
             goStatusFinal_92();
-        }else {
+        } else {
             goStatusFinal_2();
         }
     }
@@ -573,18 +569,15 @@ public class LexemaReader {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_26();
-        }
-        else if (value.equals(":")) {
+        } else if (value.equals(":")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_85();
-        }
-        else if (value.equals("%")) {
+        } else if (value.equals("%")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_86();
-        }
-        else {
+        } else {
             goStatusFinal_25();
         }
     }
@@ -718,7 +711,7 @@ public class LexemaReader {
     private void goStatus_41() {
         String value = readInputChar();
 
-        if (consts.SPECIAL_CHAR.contains(value)) {
+        if (Consts.SPECIAL_CHAR.contains(value)) {
             addCharToLexema(value);
             increaseIndex();
             goStatus_15();
@@ -929,7 +922,7 @@ public class LexemaReader {
     private void goStatus_63() {
         String value = readInputChar();
 
-      if (value.equals("=")) {
+        if (value.equals("=")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_64();
@@ -948,7 +941,7 @@ public class LexemaReader {
     private void goStatus_65() {
         String value = readInputChar();
 
-      if (value.equals("=")) {
+        if (value.equals("=")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_66();
@@ -971,13 +964,11 @@ public class LexemaReader {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_68();
-        }
-        else if (value.equals("=")) {
+        } else if (value.equals("=")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_84();
-        }
-        else {
+        } else {
             goStatusFinal_61();
         }
     }
@@ -992,17 +983,15 @@ public class LexemaReader {
     private void goStatus_69() {
         String value = readInputChar();
 
-      if (value.equals("&")) {
+        if (value.equals("&")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_70();
-        }
-        else if (value.equals("=")) {
+        } else if (value.equals("=")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_81();
-        }
-        else {
+        } else {
             goStatusFinal_57();
         }
     }
@@ -1021,19 +1010,16 @@ public class LexemaReader {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_72();
-        }
-        else if (value.equals("=")) {
+        } else if (value.equals("=")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_80();
-        }
-        else if (Pattern.matches("[a-z]", value)) {
+        } else if (Pattern.matches("[a-z]", value)) {
             addCharToLexema(value);
             increaseIndex();
 
             goStatus_93();
-        }
-        else {
+        } else {
             goStatusFinal_62();
         }
     }
@@ -1048,7 +1034,7 @@ public class LexemaReader {
     private void goStatus_73() {
         String value = readInputChar();
 
-      if (value.equals("=")) {
+        if (value.equals("=")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_74();
@@ -1067,7 +1053,7 @@ public class LexemaReader {
     private void goStatus_75() {
         String value = readInputChar();
 
-      if (value.equals(".")) {
+        if (value.equals(".")) {
             addCharToLexema(value);
             increaseIndex();
             goStatus_76();
@@ -1079,7 +1065,7 @@ public class LexemaReader {
     private void goStatus_76() {
         String value = readInputChar();
 
-      if (value.equals(".")) {
+        if (value.equals(".")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_77();
@@ -1102,18 +1088,15 @@ public class LexemaReader {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_79();
-        }
-        else if (value.equals(">")) {
+        } else if (value.equals(">")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_87();
-        }
-        else if (value.equals(":")) {
+        } else if (value.equals(":")) {
             addCharToLexema(value);
             increaseIndex();
             goStatus_88();
-        }
-        else {
+        } else {
             goStatusFinal_59();
         }
     }
@@ -1142,7 +1125,7 @@ public class LexemaReader {
     private void goStatus_82() {
         String value = readInputChar();
 
-      if (value.equals("=")) {
+        if (value.equals("=")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_83();
@@ -1189,7 +1172,7 @@ public class LexemaReader {
     private void goStatus_88() {
         String value = readInputChar();
 
-      if (value.equals("%")) {
+        if (value.equals("%")) {
             addCharToLexema(value);
             increaseIndex();
             goStatus_90();
@@ -1230,7 +1213,7 @@ public class LexemaReader {
         setLexemaEmpty();
         initialize();
     }
-    
+
     private void goStatus_93() {
         String value = readInputChar();
 
@@ -1238,27 +1221,24 @@ public class LexemaReader {
             addCharToLexema(value);
             increaseIndex();
             goStatus_93();
-        }
-        else if(Directives.INCLUDE.equals(lexema)) {
-            if(value.equals(" ")){
+        } else if (Directives.INCLUDE.equals(lexema)) {
+            if (value.equals(" ")) {
                 addCharToLexema(value);
                 increaseIndex();
                 goStatus_94();
-            }else {
+            } else {
                 this.showError("esperava receber um espaço!");
             }
-        }
-        else if(Directives.DEFINE.equals(lexema)) {
-            if(value.equals(" ")){
+        } else if (Directives.DEFINE.equals(lexema)) {
+            if (value.equals(" ")) {
                 addCharToLexema(value);
                 increaseIndex();
                 goStatus_103();
-                //goStatus_100();
-            }else {
+                // goStatus_100();
+            } else {
                 this.showError("esperava receber um espaço!");
             }
-        }
-        else {
+        } else {
             this.showError("esperava receber uma directiva valida!");
         }
     }
@@ -1270,57 +1250,55 @@ public class LexemaReader {
             addCharToLexema(value);
             increaseIndex();
             goStatus_95();
-        }
-        else if(value.equals("<")) {
+        } else if (value.equals("<")) {
             addCharToLexema(value);
             increaseIndex();
             goStatus_95();
-        }
-        else {
+        } else {
             this.showError("esperava receber \" ou <");
         }
     }
-    
+
     private void goStatus_95() {
         String value = readInputChar();
 
-         if (Pattern.matches("[a-zA-Z]", value)) {
+        if (Pattern.matches("[a-zA-Z]", value)) {
             addCharToLexema(value);
             increaseIndex();
             goStatus_96();
-        }else {
+        } else {
             showError("Esperava receber um caracter!");
         }
     }
-    
+
     private void goStatus_96() {
         String value = readInputChar();
 
-         if (Pattern.matches("[a-zA-Z]|_|[0-9]", value)) {
+        if (Pattern.matches("[a-zA-Z]|_|[0-9]", value)) {
             addCharToLexema(value);
             increaseIndex();
             goStatus_96();
-        }else if (value.equals(".")) {
+        } else if (value.equals(".")) {
             addCharToLexema(value);
             increaseIndex();
             goStatus_97();
-        }else {
-             showError("Esperava receber . ou letras");
+        } else {
+            showError("Esperava receber . ou letras");
         }
     }
-    
+
     private void goStatus_97() {
         String value = readInputChar();
 
-         if (Pattern.matches("[a-zA-Z]", value)) {
+        if (Pattern.matches("[a-zA-Z]", value)) {
             addCharToLexema(value);
             increaseIndex();
             goStatus_98();
-        }else {
-             showError("Esperava receber letras");
+        } else {
+            showError("Esperava receber letras");
         }
     }
-    
+
     private void goStatus_98() {
         String value = readInputChar();
 
@@ -1328,29 +1306,26 @@ public class LexemaReader {
             addCharToLexema(value);
             increaseIndex();
             goStatus_98();
-        }
-        else if (value.equals("\"")) {
+        } else if (value.equals("\"")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_99();
-        }
-        else if(value.equals(">")) {
+        } else if (value.equals(">")) {
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_99();
-        }
-        else {
+        } else {
             showError("Esperava receber letras");
         }
     }
-    
+
     private void goStatusFinal_99() {
         lexemas.add(new Lexema(Token.TK_DIRECTIV, lexema, line));
 
         setLexemaEmpty();
         initialize();
     }
-    
+
     private void goStatus_100() {
         String value = readInputChar();
 
@@ -1362,7 +1337,7 @@ public class LexemaReader {
             showError("Esperava receber \"");
         }
     }
-    
+
     private void goStatus_101() {
         String value = readInputChar();
 
@@ -1376,7 +1351,7 @@ public class LexemaReader {
             goStatus_101();
         }
     }
-    
+
     private void goStatusFinal_102() {
         lexemas.add(new Lexema(Token.TK_DIRECTIV, lexema, line));
 
@@ -1395,8 +1370,7 @@ public class LexemaReader {
             showError("Esperava receber letra");
         }
     }
-    
-    
+
     private void goStatus_104() {
         String value = readInputChar();
 
@@ -1404,17 +1378,15 @@ public class LexemaReader {
             addCharToLexema(value);
             increaseIndex();
             goStatus_104();
-        } 
-        else if (value.equals(" ")) {
+        } else if (value.equals(" ")) {
             addCharToLexema(value);
             increaseIndex();
             goStatus_100();
-        }
-        else {
+        } else {
             showError("Esperava receber letra");
         }
     }
-    
+
     private void goStatus_105() {
         String value = readInputChar();
 
@@ -1422,23 +1394,20 @@ public class LexemaReader {
             addCharToLexema(value);
             increaseIndex();
             goStatus_104();
-        } 
-        else if (value.equals(" ")) {
+        } else if (value.equals(" ")) {
             addCharToLexema(value);
             increaseIndex();
             goStatus_105();
-        }
-        else {
+        } else {
             showError("Esperava receber letra");
         }
     }
-    
-     private void goStatusFinal_106() {
+
+    private void goStatusFinal_106() {
         lexemas.add(new Lexema(Token.TK_VAR, lexema, line));
 
         setLexemaEmpty();
         initialize();
     }
 
-     
 }

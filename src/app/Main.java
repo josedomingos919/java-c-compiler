@@ -1,6 +1,6 @@
 package app;
 
-import conts.consts;
+import conts.Consts;
 import entities.Input;
 import entities.Lexema;
 import entities.LexemaReader;
@@ -21,7 +21,7 @@ public class Main {
     }
 
     private static void getInputContent() {
-        Input file = new Input(consts.FILE_NAME);
+        Input file = new Input(Consts.FILE_NAME);
 
         input = file.getFileContent().toCharArray();
     }
