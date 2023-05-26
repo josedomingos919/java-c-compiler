@@ -1,15 +1,3 @@
-#include "stdio.h"
-#include <stdlib.h>
-
-#define criador "jose"
-
-int main () {
-	int a = 0;
-	char c = '\n';
-
-	//incrementando
-	a += 1;
-
-	/* retornando 0 */
-	return 0;
+int main {
+    
 }
