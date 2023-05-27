@@ -66,4 +66,6 @@ public class Token {
     public static final String TK_KEYWORD = "PALAVRA_RESERVADA";
     public static final String TK_DIRECTIV = "DIRECTIVA";
     public static final String TK_VAR = "VARIAVEL";
+
+    public static final String TK_VOID = "void";
 }

@@ -1,3 +1,7 @@
+int a;
+float Square (int a, float a);
+int bad;
+
 int main {
-    
+    int a = 1;
 }

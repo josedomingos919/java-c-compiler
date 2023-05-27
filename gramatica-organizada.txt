@@ -5,13 +5,15 @@
 <decl>          ::=  <var_decl>|<fun_decl>
 <var_decl>      ::=  <type_spec>ID<decl_1>
 <type_spec>     ::=   "void"|"float"|"char"|"int"|"double"
-<decl_1>        ::=  ";" | "[""]";"
-<fun_decl>      ::=  <type_spec>ID"("<params>")"<com_stmt>
-<params>        ::=  <param_list>|"void"
-<param_list>    ::=  <param><param_list_1>
+<decl_1>        ::=  ";"|"[""]";"
+<fun_decl>      ::=  <type_spec>ID"("<params>")"<fun_decl_1> 
+<fun_decl_1>    ::=  ";"|<com_stmt>
+<params>        ::=  <param_list_2>|"void"|")"
+<param_list_2>  ::=  <param><param_list_1>|<vazio>    
 <param_list_1>  ::=  ","<param><param_list_1>|<vazio>
 <param>         ::=  <type_spec>ID<param_1>
 <param_1>       ::=  "[""]"|<vazio>
+-
 <stmt_list>     ::=  <vazio>|<stmt><stmt_list>
 <stmt>          ::=  <exp_stmt>|<com_stmt>|<if_stmt>|<while_stmt>|<return_stmt>|<break_stmt>
 <exp_stmt>      ::=  "while""("<exp>")"<stmt>
