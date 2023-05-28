@@ -4,7 +4,7 @@
 <decl>          ::=  <var_decl><decl>|<fun_decl><decl>|<vazio>
 <var_decl>      ::=  <type_spec>ID<decl_1>
 <type_spec>     ::=   "void"|"float"|"char"|"int"|"double"
-<decl_1>        ::=  ";"|"[""]";"
+<decl_1>        ::=  ";"|"[""]";"|"="<exp>";"
 <fun_decl>      ::=  <type_spec>ID"("<params>")"<fun_decl_1> 
 <fun_decl_1>    ::=  ";"|<com_stmt>
 <params>        ::=  <param_list_2>|"void"|")"
@@ -18,7 +18,7 @@
 <while_stmt>    ::=  "while""("<exp>")"<stmt>
 <com_stmt>      ::=  "{"<local_decls><stmt_list>"}"
 <local_decls>   ::=  <type_spec>ID<local_decl_1>|<vazio>
-<local_decl_1>  ::=  ";"<local_decls>|"[""]";"<local_decls>
+<local_decl_1>  ::=  ";"<local_decls>|"[""]";"<local_decls>|"="<exp>";"<local_decls>
 <if_stmt>       ::=  "if""("<exp>")"<stmt><if_stmt_1>
 <if_stmt_1>     ::=  <vazio>|"else"<stmt>
 <return_stmt>   ::=  "return"<return_stmt_1>

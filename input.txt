@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define DIVISOR_MEDIA "2"
+
+int media();
+
+int main() {
+    int aprovado = 0;
+
+    float valor1 = 28.45;
+    float valor2 = 23.45;
+
+    float resultado = media(valor1, valor2);
+
+    if(resultado >= 9.5) {
+        aprovado = 1;
+    }else {
+        aprovado = 0;
+    }
+
+    return 0;
+}
+
+int media(float valor1, float valor2) { 
+    float soma = valor1 + valor2;
+    
+    return soma / DIVISOR_MEDIA;
+}

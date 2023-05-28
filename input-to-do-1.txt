@@ -1,0 +1,17 @@
+#include <stdio.h>
+
+int media();
+
+int main() { 
+    int nota1 = 0, nota2 = 0;
+
+    printf("Digite a nota1: ");
+    scanf("%d", &nota1);
+
+    printf("Digite a nota2: ");
+    scanf("%d", &nota2);
+}
+
+int media(int nota1, int nota1) {
+    return nota1 + nota1;
+}
