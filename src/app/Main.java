@@ -3,12 +3,11 @@ package app;
 import conts.Consts;
 import entities.Input;
 import entities.Lexema;
+import java.util.Formatter;
 import entities.LexemaReader;
 import entities.SintaticSemanticAnalex;
-import java.util.Formatter;
 
 public class Main {
-
     private static char[] input;
     private static LexemaReader lexemaReader;
     private static SintaticSemanticAnalex sintatic;

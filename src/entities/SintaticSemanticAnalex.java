@@ -44,7 +44,6 @@ public class SintaticSemanticAnalex {
 
     public void decl_list() {
         this.decl();
-        this.decl_list_1();
     }
 
     public void decl() {
@@ -55,13 +54,14 @@ public class SintaticSemanticAnalex {
                 this.decl();
             }
         } else if (this.fun_decl()) {
+            System.out.println("Declaração de funução válida");
+
             if (this.pointer < this.lexema.size()) {
                 this.decl();
             }
-            System.out.println("Declaração de funução válida");
         } else {
 
-            // System.out.println("Não declarou nada");
+            System.out.println("Não declarou nada");
         }
     }
 
@@ -81,7 +81,7 @@ public class SintaticSemanticAnalex {
             }
         } else {
             this.pointer -= 1;
-            this.printError("Esperava receber um tipo de dados int, float, char... ");
+            this.printError("[type_spec] Esperava receber um tipo de dados int, float, char... ");
             return false;
         }
     }
@@ -100,7 +100,7 @@ public class SintaticSemanticAnalex {
             }
         } else {
             this.pointer -= 1;
-            this.printError("Esperava receber um identificador ou uma variavel ");
+            this.printError("[type_spec_id] Esperava receber um identificador ou uma variavel ");
             return false;
         }
     }
@@ -144,7 +144,7 @@ public class SintaticSemanticAnalex {
             }
         } else {
             this.pointer -= 1;
-            this.printError("Esperava receber ] ");
+            this.printError("[type_spec_id_close_direct_relatives] Esperava receber ] ");
             return false;
         }
     }
@@ -156,7 +156,7 @@ public class SintaticSemanticAnalex {
             return true;
         } else {
             this.pointer -= 1;
-            this.printError("Esperava receber => ; ");
+            this.printError("[type_spec_id_close_direct_relatives_close_semicolo] Esperava receber ; ");
             return false;
         }
     }
@@ -167,7 +167,7 @@ public class SintaticSemanticAnalex {
         if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
             return this.fun_decl_id();
         } else {
-            this.printError("Esperava receber um tipo de dados ");
+            this.printError("[fun_decl] Esperava receber um tipo de dados ");
             pointer--;
             return false;
         }
@@ -176,11 +176,11 @@ public class SintaticSemanticAnalex {
     public boolean fun_decl_id() {
         Lexema item = readLexema();
 
-        if (item.getToken().equals(Token.TK_ID)) {
+        if (item.getToken().equals(Token.TK_ID) || item.getToken().equals(Token.TK_VAR)) {
             return this.fun_decl_id_open_parent();
         } else {
-            this.printError("Esperava receber um ID ");
-            this.pointer = this.pointer - 1;
+            this.printError("[fun_decl_id] Esperava receber um ID ");
+            this.pointer -= 1;
             return false;
         }
     }
@@ -206,7 +206,7 @@ public class SintaticSemanticAnalex {
             }
         }
 
-        this.printError("Esperava receber ( ");
+        this.printError("[fun_decl_id_open_parent] Esperava receber ( ");
         this.pointer -= 1;
         return false;
     }
@@ -217,7 +217,7 @@ public class SintaticSemanticAnalex {
         if (item.getToken().equals(Token.TK_FP)) {
             return true;
         } else {
-            this.printError("Esperava receber ) ");
+            this.printError("[fun_decl_id_close_parent] Esperava receber ) ");
             this.pointer -= 1;
             return false;
         }
@@ -228,8 +228,6 @@ public class SintaticSemanticAnalex {
 
         if (item.getToken().equals(Token.TK_VOID)) {
             return true;
-        } else if (item.getToken().equals(Token.TK_FP)) {
-            return true;
         } else {
             this.pointer -= 1;
         }
@@ -237,7 +235,7 @@ public class SintaticSemanticAnalex {
         if (this.param_list_2()) {
             return true;
         } else {
-            this.printError("Espera receber um parametro ou void ou ) ");
+            this.printError("[fun_decl_id_open_parent_params]  Espera receber um parametro ou void ");
             this.pointer -= 1;
             return false;
         }
@@ -249,12 +247,477 @@ public class SintaticSemanticAnalex {
         if (item.getToken().equals(Token.TK_FDI)) {
             return true;
         } else {
-            return this.com_stmt();
+            this.pointer -= 1;
+            return this.com_stmt(false);
         }
     }
 
-    public boolean com_stmt() {
-        return false;
+    public boolean com_stmt(boolean isOptional) {
+        Lexema item = readLexema();
+
+        if (item.getToken().equals(Token.TK_ABC)) {
+            if (this.local_decls()) {
+                if (this.stmt_list()) {
+                    item = readLexema();
+
+                    if (item.getToken().equals(Token.TK_FCH)) {
+                        return true;
+                    } else {
+                        if (!isOptional)
+                            this.printError("Esperava receber } ");
+                        this.pointer -= 1;
+                        return false;
+                    }
+                } else {
+                    this.pointer -= 1;
+                    return false;
+                }
+            } else {
+                this.pointer -= 1;
+                return false;
+            }
+        } else {
+            this.pointer -= 1;
+            return false;
+        }
+    }
+
+    public boolean if_stmt() {
+        Lexema item = readLexema();
+
+        if (item.getLexema().equals("if")) {
+            item = readLexema();
+
+            if (item.getToken().equals(Token.TK_AP)) {
+
+                if (this.exp()) {
+                    item = readLexema();
+
+                    if (item.getToken().equals(Token.TK_FP)) {
+                        if (this.stmt()) {
+                            if (this.if_stmt_1()) {
+                                return true;
+                            } else {
+                                this.printError("[if_stmt] Expressão inválida");
+                                return false;
+                            }
+                        } else {
+                            this.printError("[if_stmt] Expressão inválida");
+                            return false;
+                        }
+                    } else {
+                        this.printError("[if_stmt] Esperava receber )");
+                        this.pointer -= 1;
+                        return false;
+                    }
+                } else {
+                    this.printError("[if_stmt] Expresão invalida");
+                    return false;
+                }
+            } else {
+                this.printError("[if_stmt] Esperava receber (");
+                this.pointer -= 1;
+                return false;
+            }
+        } else {
+            this.pointer -= 1;
+            return false;
+        }
+    }
+
+    public boolean if_stmt_1() {
+        Lexema item = readLexema();
+
+        if (item.getLexema().equals("else")) {
+            if (this.stmt()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            this.pointer -= 1;
+            return true;
+        }
+    }
+
+    public boolean while_stmt() {
+        Lexema item = readLexema();
+
+        if (item.getLexema().equals("while")) {
+            item = readLexema();
+
+            if (item.getToken().equals(Token.TK_AP)) {
+                if (this.exp()) {
+
+                    item = readLexema();
+
+                    if (item.getToken().equals(Token.TK_FP)) {
+                        if (this.stmt()) {
+                            return true;
+                        } else {
+                            this.printError("[while_stmt-stmt] Expressão invalida");
+                            return false;
+                        }
+                    } else {
+                        this.printError("[while_stmt] Esperava receber ) ");
+                        return false;
+                    }
+                } else {
+                    this.printError("[while_stmt-exp] Expressão invalida");
+                    return false;
+                }
+            } else {
+                this.printError("[while_stmt] Esperava receber (");
+                this.pointer -= 1;
+                return false;
+            }
+        } else {
+            this.pointer -= 1;
+            return false;
+        }
+    }
+
+    public boolean stmt() {
+        if (this.exp_stmt()) {
+            return true;
+        } else if (this.com_stmt(true)) {
+            return true;
+        } else if (this.if_stmt()) {
+            return true;
+        } else if (this.while_stmt()) {
+            return true;
+        } else if (this.return_stmt()) {
+            return true;
+        } else if (this.break_stmt()) {
+            return true;
+        } else {
+            this.printError("[stmt] Expressão invalida!");
+            return false;
+        }
+    }
+
+    public boolean break_stmt() {
+        Lexema item = this.readLexema();
+
+        if (item.getToken().equals("break")) {
+            item = this.readLexema();
+
+            if (item.getLexema().equals(";")) {
+                return true;
+            } else {
+                this.pointer -= 1;
+                this.printError("[break_stmt] Esperava receber ;");
+                return false;
+            }
+        } else {
+            this.pointer -= 1;
+            return false;
+        }
+    }
+
+    public boolean return_stmt() {
+        Lexema item = this.readLexema();
+
+        if (item.getToken().equals("return")) {
+            if (this.return_stmt_1()) {
+                return true;
+            } else {
+                this.printError("[return_stmt_1] Expressão invalida");
+                return false;
+            }
+        } else {
+            this.pointer -= 1;
+            return false;
+        }
+    }
+
+    public boolean return_stmt_1() {
+        Lexema item = this.readLexema();
+
+        if (item.getLexema().equals(";")) {
+            return true;
+        } else {
+            this.pointer -= 1;
+        }
+
+        if (this.exp()) {
+            item = this.readLexema();
+
+            if (item.getLexema().equals(";")) {
+                return true;
+            } else {
+                this.pointer -= 1;
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public boolean exp_stmt() {
+        Lexema item = this.readLexema();
+
+        if (item.getToken().equals(Token.TK_FDI)) {
+            return true;
+        } else {
+            this.pointer -= 1;
+        }
+
+        if (this.exp()) {
+            item = this.readLexema();
+
+            if (item.getToken().equals(Token.TK_FDI)) {
+                return true;
+            } else {
+                this.pointer -= 1;
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public boolean stmt_list() {
+        if (this.stmt()) {
+            return this.stmt_list();
+        } else {
+            return this.error.equals("") ? true : false;
+        }
+    }
+
+    public boolean exp() {
+        Lexema item = this.readLexema();
+
+        if (item.getToken().equals(Token.TK_ID)) {
+            if (this.exp_1()) {
+                if (this.exp_3()) {
+                    return true;
+                } else {
+                    this.printError("[exp-exp_3] Expressão invalida");
+                    return false;
+                }
+            } else {
+                this.printError("[exp-exp_1] Expressão invalida");
+                return false;
+            }
+        } else if (item.getLexema().equals("+") || item.getLexema().equals("-") || item.getLexema().equals("!")) {
+            if (this.exp()) {
+                if (this.exp_3()) {
+                    return true;
+                } else {
+                    this.printError("[exp-exp-exp_3] Expressão invalida");
+                    return false;
+                }
+            } else {
+                this.printError("[exp-exp] Expressão invalida");
+                return false;
+            }
+        } else if (item.getToken().equals(Token.TK_NF) || item.getToken().equals(Token.TK_NI)
+                || item.getToken().equals(Token.TK_CH)) {
+            if (this.exp_3()) {
+                return true;
+            } else {
+                this.printError("[exp-exp_3] Expressão invalida");
+                return false;
+            }
+        } else {
+            this.pointer -= 1;
+            return false;
+        }
+    }
+
+    public boolean exp_3() {
+        Lexema item = this.readLexema();
+
+        if (item.getToken().equals(Token.TK_OR) || item.getToken().equals(Token.TK_IG)
+                || item.getToken().equals(Token.TK_IGIG) || item.getToken().equals(Token.TK_MENRI)
+                || item.getToken().equals(Token.TK_MENR) || item.getToken().equals(Token.TK_MAIOR)
+                || item.getToken().equals(Token.TK_MAIOI) || item.getToken().equals(Token.TK_AND)
+                || item.getToken().equals(Token.TK_M) || item.getToken().equals(Token.TK_MEN)
+                || item.getToken().equals(Token.TK_PERCENT) || item.getToken().equals(Token.TK_AST)
+                || item.getToken().equals(Token.TK_DIV)) {
+            if (this.exp()) {
+                if (this.exp_3()) {
+                    return true;
+                } else {
+                    this.printError("[exp_3] Expressão inválida");
+                    return false;
+                }
+            } else {
+                this.printError("[exp_3] Expressão inválida");
+                return false;
+            }
+        } else {
+            this.pointer -= 1;
+            return true;
+        }
+    }
+
+    public boolean exp_1() {
+        Lexema item = this.readLexema();
+
+        if (item.getToken().equals(Token.TK_APR)) {
+            if (this.exp()) {
+                item = this.readLexema();
+
+                if (item.getToken().equals(Token.TK_FPR)) {
+                    if (this.exp_2()) {
+                        return true;
+                    } else {
+                        this.printError("[exp_1-exp-exp_2] Expressão invalida");
+                        return false;
+                    }
+                } else {
+                    this.printError("[exp_1-exp-exp_2] Esperava receber ]");
+                    this.pointer -= 1;
+                    return false;
+                }
+            } else {
+                this.printError("[exp_1-exp] Esperava receber ]");
+                return false;
+            }
+        } else if (item.getToken().equals(Token.TK_PONT)) {
+            item = this.readLexema();
+
+            if (item.getLexema().equals("sizeof")) {
+                return true;
+            } else {
+                this.printError("[exp_1] Esperava receber sizeof");
+                this.pointer -= 1;
+                return true;
+            }
+        } else if (item.getToken().equals(Token.TK_AP)) {
+            if (this.args()) {
+                item = this.readLexema();
+
+                if (item.getToken().equals(Token.TK_FP)) {
+                    return true;
+                } else {
+                    this.pointer -= 1;
+                    this.printError("[exp_1-args] Esperava receber ]");
+                    return false;
+                }
+            } else {
+                this.printError("[exp_1-args] Expressão inválida");
+                return false;
+            }
+        }
+
+        this.pointer -= 1;
+        return true;
+    }
+
+    public boolean exp_2() {
+        Lexema item = this.readLexema();
+
+        if (item.getToken().equals(Token.TK_IG)) {
+            if (this.exp()) {
+                return true;
+            } else {
+                this.printError("[exp_2] Expressão invalida!");
+                return false;
+            }
+        } else {
+            this.pointer -= 1;
+            return true;
+        }
+    }
+
+    public boolean args() {
+        if (this.arg_list()) {
+            return true;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean arg_list() {
+        if (this.exp()) {
+            if (this.arg_list_1()) {
+                return true;
+            } else {
+                this.printError("[arg_list-arg_list_1] Expressão invalida!");
+                return false;
+            }
+        } else {
+            this.printError("[arg_list] Expressão invalida!");
+            return false;
+        }
+    }
+
+    public boolean arg_list_1() {
+        Lexema item = this.readLexema();
+
+        if (item.getToken().equals(Token.TK_VIR)) {
+            if (this.exp()) {
+                if (this.arg_list_1()) {
+                    return true;
+                } else {
+                    this.printError("[arg_list_1] Argumento Inválida!");
+                    return false;
+                }
+            } else {
+                this.printError("[arg_list_1-exp] Expressão Inválida!");
+                return false;
+            }
+        } else {
+            this.pointer -= 1;
+            return true;
+        }
+    }
+
+    public boolean local_decls() {
+        Lexema item = readLexema();
+
+        if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
+            item = readLexema();
+
+            if (item.getToken().equals(Token.TK_ID)) {
+                if (this.local_decl_1()) {
+                    return true;
+                } else {
+                    this.pointer -= 1;
+                    return false;
+                }
+            } else {
+                this.printError("[local_decls] Esperava receber um ID");
+                this.pointer -= 1;
+                return false;
+            }
+        } else {
+            this.pointer -= 1;
+            return true;
+        }
+    }
+
+    public boolean local_decl_1() {
+        Lexema item = readLexema();
+
+        if (item.getToken().equals(Token.TK_FDI)) {
+            return this.local_decls();
+        } else if (item.getToken().equals(Token.TK_APR)) {
+            item = readLexema();
+
+            if (item.getToken().equals(Token.TK_FPR)) {
+                item = readLexema();
+
+                if (item.getToken().equals(Token.TK_FDI)) {
+                    return this.local_decls();
+                } else {
+                    this.printError("Esperava receber ;");
+                    this.pointer -= 1;
+                    return false;
+                }
+            } else {
+                this.printError("Esperava receber ]");
+                this.pointer -= 1;
+                return false;
+            }
+        } else {
+            this.printError("[local_decl_1] Esperava receber ; ou [ ");
+            this.pointer -= 1;
+            return false;
+        }
     }
 
     public boolean param_list_2() {
@@ -314,7 +777,7 @@ public class SintaticSemanticAnalex {
         if (item.getToken().equals(Token.TK_FPR)) {
             return true;
         } else {
-            this.printError("Esperava receber ] ");
+            this.printError("[param_type_spec_id_param_1_close_parent] Esperava receber ] ");
             this.pointer -= 1;
             return false;
         }
@@ -328,7 +791,7 @@ public class SintaticSemanticAnalex {
                 return this.param_list_1();
             } else {
                 if (this.error.equals("")) {
-                    this.printError("Esperava receber um parametro ");
+                    this.printError("[param_list_1] Esperava receber um parametro ");
                 }
 
                 return false;
@@ -340,6 +803,4 @@ public class SintaticSemanticAnalex {
         }
     }
 
-    public void decl_list_1() {
-    }
 }
