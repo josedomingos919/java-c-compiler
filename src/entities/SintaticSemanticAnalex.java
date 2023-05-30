@@ -391,6 +391,107 @@ public class SintaticSemanticAnalex {
             return true;
         } else if (this.break_stmt()) {
             return true;
+        } else if (this.for_stmt()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean for_stmt() {
+        Lexema item = this.readLexema();
+
+        if (!item.getLexema().equals("for")) {
+            this.pointer -= 1;
+            return false;
+        }
+
+        item = this.readLexema();
+
+        if (!item.getToken().equals(Token.TK_AP)) {
+            this.pointer -= 1;
+            this.printError("[for_stmt] Esperava receber ( ");
+            return false;
+        }
+
+        if (!this.for_stmt_1()) {
+            this.printError("[exp] Expresão inválida ");
+            return false;
+        }
+
+        item = this.readLexema();
+
+        if (!item.getToken().equals(Token.TK_FDI)) {
+            this.pointer -= 1;
+            this.printError("[for_stmt] Esperava receber ; ");
+            return false;
+        }
+
+        if (!this.exp()) {
+            this.printError("[for_stmt-exp] Expressão invalida");
+            return false;
+        }
+
+        item = this.readLexema();
+
+        if (!item.getToken().equals(Token.TK_FDI)) {
+            this.pointer -= 1;
+            this.printError("[for_stmt] Esperava receber ; ");
+            return false;
+        }
+
+        if (!this.exp()) {
+            this.printError("[for_stmt-exp] Expressão invalida");
+            return false;
+        }
+
+        item = this.readLexema();
+
+        if (!item.getToken().equals(Token.TK_FP)) {
+            this.pointer -= 1;
+            this.printError("[for_stmt] Esperava receber ) ");
+            return false;
+        }
+
+        if (!this.stmt()) {
+            this.printError("[for_stmt-stmt] Expressão invalida");
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean for_stmt_1() {
+        Lexema item = this.readLexema();
+
+        if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
+            item = this.readLexema();
+
+            if (!item.getToken().equals(Token.TK_ID)) {
+                this.pointer -= 1;
+                this.printError("Esperava receber um ID ");
+                return false;
+            }
+
+            item = this.readLexema();
+
+            if (!item.getToken().equals(Token.TK_IG)) {
+                this.pointer -= 1;
+                this.printError("Esperava receber um = ");
+                return false;
+            }
+
+            if (this.exp()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            this.pointer -= 1;
+        }
+
+        if (this.exp()) {
+            return true;
         } else {
             return false;
         }
@@ -535,7 +636,8 @@ public class SintaticSemanticAnalex {
                 || item.getToken().equals(Token.TK_MAIOI) || item.getToken().equals(Token.TK_AND)
                 || item.getToken().equals(Token.TK_M) || item.getToken().equals(Token.TK_MEN)
                 || item.getToken().equals(Token.TK_PERCENT) || item.getToken().equals(Token.TK_AST)
-                || item.getToken().equals(Token.TK_DIV)) {
+                || item.getToken().equals(Token.TK_DIV)
+                || item.getToken().equals(Token.TK_MI) || item.getToken().equals(Token.TK_MEMI)) {
             if (this.exp()) {
                 if (this.exp_3()) {
                     return true;
@@ -601,6 +703,10 @@ public class SintaticSemanticAnalex {
                 this.printError("[exp_1-args] Expressão inválida");
                 return false;
             }
+        } else if (item.getToken().equals(Token.TK_MA)) {
+            return true;
+        } else if (item.getToken().equals(Token.TK_MEM)) {
+            return true;
         }
 
         this.pointer -= 1;

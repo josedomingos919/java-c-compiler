@@ -13,7 +13,7 @@
 <param>         ::=  <type_spec>ID<param_1>
 <param_1>       ::=  "[""]"|<vazio>
 <stmt_list>     ::=  <stmt><stmt_list>|<vazio>
-<stmt>          ::=  <exp_stmt>|<com_stmt>|<if_stmt>|<while_stmt>|<return_stmt>|<break_stmt>
+<stmt>          ::=  <exp_stmt>|<com_stmt>|<if_stmt>|<while_stmt>|<return_stmt>|<break_stmt>|for_stmt|printf_stmt|scanf_stmt
 <exp_stmt>      ::=  ";"|<exp>";"
 <while_stmt>    ::=  "while""("<exp>")"<stmt>
 <com_stmt>      ::=  "{"<local_decls><stmt_list>"}"
@@ -21,12 +21,14 @@
 <local_decl_1>  ::=  ";"<local_decls>|"[""]";"<local_decls>|"="<exp>";"<local_decls>
 <if_stmt>       ::=  "if""("<exp>")"<stmt><if_stmt_1>
 <if_stmt_1>     ::=  <vazio>|"else"<stmt>
+<for_stmt>      ::=  "for""("<for_stmt_1>";"<exp>";"<exp>")"<stmt>
+<for_stmt_1>    ::=  <type_spec>ID=<exp>|<exp>
 <return_stmt>   ::=  "return"<return_stmt_1>
 <return_stmt_1> ::=  ";"|<exp>";"
 <break_stmt>    ::=  "break"";"
 <exp>           ::=  ID<exp_1><exp_3>|"+"<exp><exp_3>|"-"<exp><exp_3>|"!"<exp><exp_3>|FLOAT_LIT<exp_3>|CHAR_LIT<exp_3>|INT_LIT<exp_3> 
-<exp_3>         ::=  "||"<exp><exp_3>|"="<exp><exp_3>|"=="<exp><exp_3>|"<="<exp><exp_3>|"<"<exp><exp_3>|">"<exp><exp_3>|">="<exp><exp_3>|"&&"<exp><exp_3>|"+"<exp><exp_3>|"-"<exp><exp_3>|"%"<exp><exp_3>|"*"<exp><exp_3>|"/"<exp><exp_3>|<vazio>
-<exp_1>         ::=  "["<exp>"]"<exp_2>|".""sizeof"|"("<args>")"|<vazio>  
+<exp_3>         ::=  "||"<exp><exp_3>|"="<exp><exp_3>|"=="<exp><exp_3>|"<="<exp><exp_3>|"<"<exp><exp_3>|">"<exp><exp_3>|">="<exp><exp_3>|"&&"<exp><exp_3>|"+"<exp><exp_3>|"-"<exp><exp_3>|"%"<exp><exp_3>|"*"<exp><exp_3>|"/"<exp><exp_3>|"+="|"-="|<vazio>
+<exp_1>         ::=  "["<exp>"]"<exp_2>|".""sizeof"|"("<args>")"|"++"|"--"|<vazio>  
 <exp_2>         ::=  "="<exp>|<vazio>
 <arg_list>      ::=  <exp><arg_list_1>
 <arg_list_1>    ::=  ","<exp><arg_list_1>|<vazio>
