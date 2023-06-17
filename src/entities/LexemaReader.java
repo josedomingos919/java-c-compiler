@@ -1404,7 +1404,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_106() {
-        lexemas.add(new Lexema(Token.TK_VAR, lexema, line));
+        lexemas.add(new Lexema(Token.TK_ID, lexema, line));
 
         setLexemaEmpty();
         initialize();

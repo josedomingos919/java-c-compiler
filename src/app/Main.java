@@ -5,12 +5,12 @@ import entities.Input;
 import entities.Lexema;
 import java.util.Formatter;
 import entities.LexemaReader;
-import entities.SintaticSemanticAnalex;
+import entities.Sintatic;
 
 public class Main {
     private static char[] input;
     private static LexemaReader lexemaReader;
-    private static SintaticSemanticAnalex sintatic;
+    private static Sintatic sintatic;
 
     public static void main(String[] args) {
         initialize();
@@ -20,11 +20,18 @@ public class Main {
         getInputContent();
         readInputLexemas();
         sintaticSemanticAnalex();
-        printLexemas();
+        printSintaticError();
+        // printLexemas();
     }
 
     private static void sintaticSemanticAnalex() {
-        sintatic = new SintaticSemanticAnalex(lexemaReader.getLexemas());
+        sintatic = new Sintatic(lexemaReader.getLexemas());
+    }
+
+    private static void printSintaticError() {
+        for (String error : sintatic.getError()) {
+            System.out.println(error);
+        }
     }
 
     private static void getInputContent() {
@@ -38,10 +45,6 @@ public class Main {
     }
 
     private static void printLexemas() {
-        if (!sintatic.getError().equals("")) {
-            System.out.println(sintatic.getError());
-            return;
-        }
 
         Formatter fmt = new Formatter();
         fmt.format("%40s %40s %40s\n\n", "LEXEMA", "TOKEN", "LINHA");
