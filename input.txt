@@ -1,3 +1,11 @@
-int b = 0 
-int b int k = 39;
-int k[];
+int main() {
+    int rest = 0;
+
+    teste()
+    
+    if(2 > 4) {}
+    
+    int s = 0
+
+    return 0;
+}

@@ -39,7 +39,9 @@ public class Sintatic {
         for (Lexema item : lexema) {
             if (!item.getToken().equals(Token.TK_DIRECTIV) &&
                     !item.getToken().equals(Token.TK_CARD) &&
-                    !item.getToken().equals(Token.TK_CARDC)) {
+                    !item.getToken().equals(Token.TK_CARDC) &&
+                    !item.getToken().equals(Token.TK_COMMENT) &&
+                    !item.getToken().equals(Token.TK_COMMENTP)) {
                 item.setIndex(index);
                 newLexema.add(item);
             }
@@ -61,8 +63,28 @@ public class Sintatic {
     public void continueAnaliser() {
         Lexema item = getItem();
 
-        if (!item.getToken().equals(Token.TK_END))
+        if (item.getToken().equals(Token.TK_END))
+            return;
+
+        if (item.getToken().equals(Token.TK_FCH)) {
+            this.increasePointer();
+            this.continueAnaliser();
+            return;
+        }
+
+        if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
             this.decl();
+            return;
+        }
+
+        if (isKeyWord(item) || item.getToken().equals(Token.TK_ID)) {
+            this.stmt();
+            this.continueAnaliser();
+            return;
+        }
+
+        this.error.add("Esperava receber int float ou if for... na linha: " + item.getLine());
+        this.errorSkype();
     }
 
     // error skype
@@ -74,6 +96,13 @@ public class Sintatic {
 
             if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
                 this.decl();
+                return;
+            } else if (item.getToken().equals(Token.TK_ABC)) {
+                this.com_stmt(false);
+                return;
+            } else if (this.isKeyWord(item) || item.getToken().equals(Token.TK_ID)) {
+                this.stmt();
+                errorSkype();
                 return;
             } else {
                 this.increasePointer();
@@ -121,6 +150,17 @@ public class Sintatic {
         if (item.getToken().equals(Token.TK_FDI)) {
             this.increasePointer();
             this.continueAnaliser();
+        } else if (item.getToken().equals(Token.TK_VIR)) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (item.getToken().equals(Token.TK_ID)) {
+                this.increasePointer();
+                this.var_decl();
+            } else {
+                this.error.add("Esperava receber um ID na linha: " + item.getLine());
+                this.errorSkype();
+            }
         } else if (item.getToken().equals(Token.TK_APR)) {
             this.increasePointer();
             item = this.getItem();
@@ -157,7 +197,7 @@ public class Sintatic {
                     }
                 }
             } else {
-                this.error.add("Esperava receber um ID + - ! float char ou int");
+                this.error.add("Esperava receber um ID + - ! float char ou int na linha: " + item.getLine());
                 this.errorSkype();
             }
         } else {
@@ -167,6 +207,664 @@ public class Sintatic {
     }
 
     public void fun_decl() {
+        Lexema item = this.getItem();
+
+        if (item.getToken().equals(Token.TK_AP)) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (!this.params())
+                return;
+
+            item = this.getItem();
+
+            if (!item.getToken().equals(Token.TK_FP)) {
+                this.error.add("Esperava receber )  na linha: " + item.getLine());
+                this.errorSkype();
+                return;
+            }
+            this.increasePointer();
+            item = this.getItem();
+
+            if (item.getToken().equals(Token.TK_FDI)) {
+                this.increasePointer();
+                this.continueAnaliser();
+                return;
+            }
+            item = this.getItem();
+
+            if (this.isComStmtFirst(item)) {
+                this.com_stmt(false);
+            } else {
+                this.error.add("Esperava receber {  na linha: " + item.getLine());
+                this.errorSkype();
+            }
+        } else {
+            this.error.add("Esperava receber (  na linha: " + item.getLine());
+            this.errorSkype();
+        }
+    }
+
+    public boolean local_decl_1() {
+        Lexema item = this.getItem();
+
+        if (item.getToken().equals(Token.TK_FDI)) {
+            this.increasePointer();
+            return this.local_decls();
+        } else if (item.getToken().equals(Token.TK_VIR)) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (item.getToken().equals(Token.TK_ID)) {
+                this.increasePointer();
+                return this.local_decl_1();
+            } else {
+                this.error.add("Esperava receber um ID na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+        } else if (item.getToken().equals(Token.TK_APR)) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (item.getToken().equals(Token.TK_FPR)) {
+                this.increasePointer();
+                item = this.getItem();
+
+                if (item.getToken().equals(Token.TK_FDI)) {
+                    this.increasePointer();
+                    return this.local_decls();
+                } else {
+                    this.error.add("Esperava receber ; na linha: " + item.getLine());
+                    this.errorSkype();
+                    return false;
+                }
+            } else {
+                this.error.add("Esperava receber ] na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+        } else if (item.getToken().equals(Token.TK_IG)) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (isExpFirst(item)) {
+                if (this.exp()) {
+                    item = this.getItem();
+
+                    if (item.getToken().equals(Token.TK_FDI)) {
+                        this.increasePointer();
+                        return this.local_decls();
+                    } else {
+                        this.error.add("Esperava receber ; na linha: " + item.getLine());
+                        this.errorSkype();
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                this.error.add("Esperava receber um ID + - ! float char ou int na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+        } else {
+            this.error.add("Esperava receber ;  [ = na linha: " + item.getLine());
+            this.errorSkype();
+            return false;
+        }
+    }
+
+    public boolean local_decls() {
+        Lexema item = this.getItem();
+
+        if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (item.getToken().equals(Token.TK_ID)) {
+                this.increasePointer();
+
+                if (this.local_decl_1()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                this.error.add("Esperava receber um ID na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    public boolean com_stmt(boolean get) {
+        Lexema item = this.getItem();
+
+        if (item.getToken().equals(Token.TK_ABC)) {
+            this.increasePointer();
+
+            if (this.content()) {
+                item = this.getItem();
+
+                if (item.getToken().equals(Token.TK_FCH)) {
+                    this.increasePointer();
+
+                    if (get) {
+                        return true;
+                    } else {
+                        this.continueAnaliser();
+                        return true;
+                    }
+                } else {
+                    this.error.add("Esperava receber } na linha: " + item.getLine());
+                    this.errorSkype();
+                    return false;
+                }
+            } else {
+                return false;
+            }
+
+        } else {
+            this.error.add("Esperava receber {  na linha: " + item.getLine());
+            this.errorSkype();
+            return false;
+        }
+    }
+
+    public boolean content() {
+        Lexema item = this.getItem();
+
+        if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
+            if (this.local_decls())
+                return this.content();
+            else
+                return false;
+        } else if (this.isStmtFirst(item)) {
+            if (this.stmt())
+                return this.content();
+            else
+                return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean exp_stmt() {
+        Lexema item = this.getItem();
+
+        if (item.getToken().equals(Token.TK_FDI)) {
+            this.increasePointer();
+            return true;
+        }
+
+        if (isExpFirst(item)) {
+            if (this.exp()) {
+                item = this.getItem();
+
+                if (item.getToken().equals(Token.TK_FDI)) {
+                    this.increasePointer();
+                    return true;
+                } else {
+                    this.error.add("Esperava receber ; na linha: " + item.getLine());
+                    this.errorSkype();
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public boolean if_stmt_1() {
+        Lexema item = this.getItem();
+
+        if (item.getLexema().equals("else")) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (isStmtFirst(item)) {
+                return this.stmt();
+            } else {
+                this.error.add("Esperava receber um statment na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    public boolean if_stmt() {
+        Lexema item = this.getItem();
+
+        if (item.getLexema().equals("if")) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (item.getToken().equals(Token.TK_AP)) {
+                this.increasePointer();
+                item = this.getItem();
+
+                if (isExpFirst(item)) {
+                    if (this.exp()) {
+                        item = this.getItem();
+
+                        if (item.getToken().equals(Token.TK_FP)) {
+                            this.increasePointer();
+                            item = this.getItem();
+
+                            if (this.isStmtFirst(item)) {
+                                if (this.stmt()) {
+                                    if (this.if_stmt_1()) {
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+                                } else {
+                                    return false;
+                                }
+                            } else {
+                                this.error.add("Esperava receber um statment na linha: " + item.getLine());
+                                this.errorSkype();
+                                return false;
+                            }
+                        } else {
+                            this.error.add("Esperava receber ) na linha: " + item.getLine());
+                            this.errorSkype();
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                } else {
+                    this.error.add("Esperava receber um ID + - ! float char ou int na linha: " + item.getLine());
+                    this.errorSkype();
+                    return false;
+                }
+            } else {
+                this.error.add("Esperava receber ( na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public boolean return_stmt_1() {
+        Lexema item = this.getItem();
+
+        if (item.getLexema().equals(";")) {
+            this.increasePointer();
+            return true;
+        } else if (this.isExpFirst(item)) {
+            if (this.exp()) {
+                item = this.getItem();
+
+                if (item.getLexema().equals(";")) {
+                    this.increasePointer();
+                    return true;
+                } else {
+                    this.error.add("Esperava receber um ; na linha: " + item.getLine());
+                    this.errorSkype();
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            this.error.add("Esperava receber um ID + - ! float char ou int na linha: " + item.getLine());
+            this.errorSkype();
+            return false;
+        }
+    }
+
+    public boolean return_stmt() {
+        Lexema item = this.getItem();
+
+        if (item.getLexema().equals("return")) {
+            this.increasePointer();
+            item = this.getItem();
+
+            return this.return_stmt_1();
+        } else {
+            return false;
+        }
+    }
+
+    public boolean stmt() {
+        Lexema item = this.getItem();
+
+        if (isExpFirst(item) || item.getToken().equals(Token.TK_FDI)) {
+            return this.exp_stmt();
+        } else if (item.getToken().equals(Token.TK_ABC)) {
+            return this.com_stmt(true);
+        } else if (item.getLexema().equals("if")) {
+            return this.if_stmt();
+        } else if (item.getLexema().equals("while")) {
+            return this.while_stmt();
+        } else if (item.getLexema().equals("return")) {
+            return this.return_stmt();
+        } else if (item.getLexema().equals("break")) {
+            return this.break_stmt();
+        } else if (item.getLexema().equals("for")) {
+            return this.for_stmt();
+        } else {
+            return false;
+        }
+    }
+
+    public boolean for_stmt() {
+        Lexema item = this.getItem();
+
+        if (!item.getLexema().equals("for")) {
+            return false;
+        }
+        this.increasePointer();
+        item = this.getItem();
+
+        if (!item.getToken().equals(Token.TK_AP)) {
+            this.error.add("Esperava receber ( na linha: " + item.getLine());
+            this.errorSkype();
+            return false;
+        }
+        this.increasePointer();
+
+        if (!this.for_stmt_1()) {
+            return false;
+        }
+        item = this.getItem();
+
+        if (!item.getToken().equals(Token.TK_FDI)) {
+            this.error.add("Esperava receber ; na linha: " + item.getLine());
+            this.errorSkype();
+            return false;
+        }
+        this.increasePointer();
+
+        if (!isExpFirst(item)) {
+            this.error.add("Esperava receber ID ! + int float... na linha: " + item.getLine());
+            this.errorSkype();
+            return false;
+        }
+
+        if (!this.exp()) {
+            return false;
+        }
+        item = this.getItem();
+
+        if (!item.getToken().equals(Token.TK_FDI)) {
+            this.error.add("Esperava receber ; na linha: " + item.getLine());
+            this.errorSkype();
+            return false;
+        }
+        this.increasePointer();
+
+        if (!isExpFirst(item)) {
+            this.error.add("Esperava receber ID ! + int float... na linha: " + item.getLine());
+            this.errorSkype();
+            return false;
+        }
+
+        if (!this.exp()) {
+            return false;
+        }
+
+        item = this.getItem();
+
+        if (!item.getToken().equals(Token.TK_FP)) {
+            this.error.add("Esperava receber ) na linha: " + item.getLine());
+            this.errorSkype();
+            return false;
+        }
+        this.increasePointer();
+
+        if (!isStmtFirst(item)) {
+            this.error.add("Esperava receber um statment na linha: " + item.getLine());
+            this.errorSkype();
+            return false;
+        }
+
+        return this.stmt();
+    }
+
+    public boolean for_stmt_1() {
+        Lexema item = this.getItem();
+
+        if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (!item.getToken().equals(Token.TK_ID)) {
+                this.error.add("Esperava receber um ID na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+            this.increasePointer();
+
+            item = this.getItem();
+
+            if (!item.getToken().equals(Token.TK_IG)) {
+                this.error.add("Esperava receber um = na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+            this.increasePointer();
+
+            if (!isExpFirst(item)) {
+                this.error.add("Esperava receber um ID + ! int, float... na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+
+            return this.exp();
+        }
+
+        if (!isExpFirst(item)) {
+            this.error.add("Esperava receber um ID + ! int, float... na linha: " + item.getLine());
+            this.errorSkype();
+            return false;
+        }
+
+        return this.exp();
+    }
+
+    public boolean break_stmt() {
+        Lexema item = this.getItem();
+
+        if (item.getToken().equals("break")) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (item.getLexema().equals(";")) {
+                this.increasePointer();
+                return true;
+            } else {
+                this.error.add("Esperava receber ; na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public boolean while_stmt() {
+        Lexema item = this.getItem();
+
+        if (item.getLexema().equals("while")) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (item.getToken().equals(Token.TK_AP)) {
+                this.increasePointer();
+                item = this.getItem();
+
+                if (isExpFirst(item)) {
+                    if (this.exp()) {
+                        item = this.getItem();
+
+                        if (item.getToken().equals(Token.TK_FP)) {
+                            this.increasePointer();
+                            item = this.getItem();
+
+                            if (isStmtFirst(item)) {
+                                return this.stmt();
+                            } else {
+                                this.error.add("Esperava receber um statment na linha: " + item.getLine());
+                                this.errorSkype();
+                                return false;
+                            }
+                        } else {
+                            this.error.add("Esperava receber ) na linha: " + item.getLine());
+                            this.errorSkype();
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                } else {
+                    this.error.add("Esperava receber um ID + - ! float char ou int na linha: " + item.getLine());
+                    this.errorSkype();
+                    return false;
+                }
+            } else {
+                this.error.add("Esperava receber ( " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public boolean stmt_list() {
+        Lexema item = this.getItem();
+
+        if (isStmtFirst(item)) {
+            if (this.stmt()) {
+                return this.stmt_list();
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    public boolean params() {
+        Lexema item = this.getItem();
+
+        if (item.getLexema().equals(Token.TK_VOID)) {
+            this.increasePointer();
+            return true;
+        }
+
+        if (this.param()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean param() {
+        Lexema item = this.getItem();
+
+        if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (item.getToken().equals(Token.TK_ID)) {
+                this.increasePointer();
+
+                if (this.param_1()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                this.error.add("Esperava receber um ID na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    public boolean param_1() {
+        Lexema item = this.getItem();
+
+        if (item.getToken().equals(Token.TK_APR)) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (item.getToken().equals(Token.TK_FPR)) {
+                this.increasePointer();
+                return this.param_2();
+            } else {
+                this.error.add("Esperava receber um ] na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+        } else if (item.getToken().equals(Token.TK_VIR)) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
+                this.increasePointer();
+                item = this.getItem();
+
+                if (item.getToken().equals(Token.TK_ID)) {
+                    this.increasePointer();
+                    return this.param_1();
+                } else {
+                    this.error.add("Esperava receber um ID na linha: " + item.getLine());
+                    this.errorSkype();
+                    return false;
+                }
+            } else {
+                this.error.add("Esperava receber um float char int... na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    public boolean param_2() {
+        Lexema item = this.getItem();
+
+        if (item.getToken().equals(Token.TK_VIR)) {
+            this.increasePointer();
+            item = this.getItem();
+
+            if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
+                this.increasePointer();
+                item = this.getItem();
+
+                if (item.getToken().equals(Token.TK_ID)) {
+                    this.increasePointer();
+                    return this.param_1();
+                } else {
+                    this.error.add("Esperava receber um ID na linha: " + item.getLine());
+                    this.errorSkype();
+                    return false;
+                }
+            } else {
+                this.error.add("Esperava receber um float char int... na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 
     public boolean exp() {
@@ -198,7 +896,7 @@ public class Sintatic {
                     return false;
                 }
             } else {
-                this.error.add("Esperava receber um ID + - ! float char ou int");
+                this.error.add("Esperava receber um ID + - ! float char ou int na linha: " + item.getLine());
                 this.errorSkype();
                 return false;
             }
@@ -243,7 +941,7 @@ public class Sintatic {
                     return false;
                 }
             } else {
-                this.error.add("Esperava receber um ID + - ! float char ou int");
+                this.error.add("Esperava receber um ID + - ! float char ou int na linha: " + item.getLine());
                 this.errorSkype();
                 return false;
             }
@@ -252,6 +950,7 @@ public class Sintatic {
             item = this.getItem();
 
             if (item.getLexema().equals("sizeof")) {
+                this.increasePointer();
                 return true;
             } else {
                 this.error.add("[exp_1] Esperava receber sizeof");
@@ -265,6 +964,7 @@ public class Sintatic {
                 item = this.getItem();
 
                 if (item.getToken().equals(Token.TK_FP)) {
+                    this.increasePointer();
                     return true;
                 } else {
                     this.error.add("Esperava receber ] na linha: " + item.getLine());
@@ -275,8 +975,10 @@ public class Sintatic {
                 return false;
             }
         } else if (item.getToken().equals(Token.TK_MA)) {
+            this.increasePointer();
             return true;
         } else if (item.getToken().equals(Token.TK_MEM)) {
+            this.increasePointer();
             return true;
         }
 
@@ -296,7 +998,7 @@ public class Sintatic {
                     return false;
                 }
             } else {
-                this.error.add("Esperava receber um ID + - ! float char ou int");
+                this.error.add("Esperava receber um ID + - ! float char ou int na linha: " + item.getLine());
                 this.errorSkype();
                 return false;
             }
@@ -317,6 +1019,7 @@ public class Sintatic {
                 || item.getToken().equals(Token.TK_DIV)
                 || item.getToken().equals(Token.TK_MI) || item.getToken().equals(Token.TK_MEMI)) {
             this.increasePointer();
+            item = this.getItem();
 
             if (this.isExpFirst(item)) {
                 if (this.exp()) {
@@ -329,7 +1032,7 @@ public class Sintatic {
                     return false;
                 }
             } else {
-                this.error.add("Esperava receber um ID + - ! float char ou int");
+                this.error.add("Esperava receber um ID + - ! float char ou int na linha: " + item.getLine());
                 this.errorSkype();
                 return false;
             }
@@ -373,7 +1076,7 @@ public class Sintatic {
                     return false;
                 }
             } else {
-                this.error.add("Esperava receber um ID + - ! float char ou int");
+                this.error.add("Esperava receber um ID + - ! float char ou int na linha: " + item.getLine());
                 this.errorSkype();
                 return false;
             }
@@ -383,12 +1086,25 @@ public class Sintatic {
     }
 
     // validations
+    public boolean isKeyWord(Lexema item) {
+        return "if".contains(item.getLexema())
+                || "for".contains(item.getLexema())
+                || "while".contains(item.getLexema())
+                || "return".contains(item.getLexema())
+                || "break".contains(item.getLexema());
+
+    }
+
     public boolean isVardDeclFirst(Lexema item) {
         return ";[=,".contains(item.getLexema());
     }
 
     public boolean isFunDeclFirst(Lexema item) {
         return "(".contains(item.getLexema());
+    }
+
+    public boolean isComStmtFirst(Lexema item) {
+        return "{".contains(item.getLexema());
     }
 
     public boolean isExpFirst(Lexema item) {
@@ -398,4 +1114,12 @@ public class Sintatic {
                 || item.getToken().equals(Token.TK_CH);
     }
 
+    public boolean isStmtFirst(Lexema item) {
+        return isExpFirst(item) || item.getToken().equals(Token.TK_FDI) || (item.getToken().equals(Token.TK_ABC))
+                || item.getLexema().equals("if")
+                || item.getLexema().equals("while")
+                || item.getLexema().equals("return")
+                || item.getLexema().equals("break")
+                || item.getLexema().equals("for");
+    }
 }
