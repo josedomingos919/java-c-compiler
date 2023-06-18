@@ -1,11 +1,11 @@
 int main() {
     int rest = 0;
 
-    teste()
+    teste();
     
     if(2 > 4) {}
     
-    int s = 0
+    int s = 0;
 
     return 0;
 }

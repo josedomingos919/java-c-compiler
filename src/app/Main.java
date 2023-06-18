@@ -21,7 +21,9 @@ public class Main {
         readInputLexemas();
         sintaticSemanticAnalex();
         printSintaticError();
-        // printLexemas();
+
+        if (sintatic.getError().size() == 0)
+            printLexemas();
     }
 
     private static void sintaticSemanticAnalex() {
@@ -32,6 +34,9 @@ public class Main {
         for (String error : sintatic.getError()) {
             System.out.println(error);
         }
+
+        if (sintatic.getError().size() > 0)
+            System.out.println("Total de erros: " + sintatic.getError().size());
     }
 
     private static void getInputContent() {
