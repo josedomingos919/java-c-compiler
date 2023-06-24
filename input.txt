@@ -5,17 +5,23 @@ int teste() {
     
 }
 
+int k;
+
 int main() {
     int rest = 0;
 
-    int k, o, j = 0, u, x;
+    int j = rest, u = 9, x;
     int b;
+    int k;
 
     k = u + x;
+    k + 1;
 
-    int a = soma(b, 3);
+    int a = soma( bbb, 3 );
     
     a = soma(b, 3);
+
+    a = 488 + a + soma(3,5);
     
     teste();
     
@@ -28,4 +34,4 @@ int main() {
 
 int soma(int a, int b) {
     return a + b;
-}  
+}

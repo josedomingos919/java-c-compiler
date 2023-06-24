@@ -31,7 +31,7 @@ public class Main {
             printSemanticError();
 
             if (semanticReader.getErros().size() == 0) {
-                printLexemas();
+                // printLexemas();
             }
         }
 

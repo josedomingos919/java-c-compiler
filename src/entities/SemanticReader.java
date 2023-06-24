@@ -3,7 +3,6 @@ package entities;
 import java.util.ArrayList;
 
 public class SemanticReader {
-
     private ArrayList<Semantic> semanticTable;
     private ArrayList<String> erros;
 
@@ -12,6 +11,7 @@ public class SemanticReader {
         this.erros = new ArrayList<>();
 
         this.checkDeclarationOfUsedVars();
+        this.checkDoubleVarDeclaration();
     }
 
     public ArrayList<String> getErros() {
@@ -80,5 +80,55 @@ public class SemanticReader {
 
             i++;
         }
+    }
+
+    // c) Uma variável não deve ser declarada duas vezes no mesmo escopo;
+    public void checkDoubleVarDeclaration() {
+        ArrayList<Semantic> vars = this.getVarDecls();
+
+        // filter var declaration
+        for (Semantic expression : vars) {
+            int count = 0;
+            Lexema lexemaID = getVarID(expression);
+            int scope = expression.getSignature().get(0).getScope();
+
+            for (Semantic expression1 : vars) {
+                Lexema lexemaID1 = getVarID(expression1);
+                int scope1 = expression1.getSignature().get(0).getScope();
+
+                if (scope1 == scope && lexemaID.getLexema().equals(lexemaID1.getLexema())) {
+                    if (count > 0) {
+                        String errorMessage = "Declaracao da variavel " + lexemaID.getLexema() + " duplicada na linha: "
+                                + lexemaID1.getLine();
+
+                        if (!erros.contains(errorMessage))
+                            this.erros.add(errorMessage);
+                    }
+
+                    count++;
+                }
+            }
+        }
+    }
+
+    public Lexema getVarID(Semantic expression) {
+        return expression.getSignature().get(expression.getSignature().get(0).getToken().equals(Token.TK_ID) ? 0 : 1);
+    }
+
+    public ArrayList<Semantic> getVarDecls() {
+        ArrayList<Semantic> vars = new ArrayList<>();
+
+        // filter var declaration
+        for (Semantic expression : this.semanticTable) {
+            if (expression.getType().equals("var_decl") ||
+                    expression.getType().equals("var_decl_array") ||
+                    expression.getType().equals("var_decl_equal")
+
+            ) {
+                vars.add(expression);
+            }
+        }
+
+        return vars;
     }
 }
