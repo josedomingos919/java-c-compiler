@@ -6,22 +6,26 @@ import java.util.List;
 
 public class Sintatic {
 
-    int pointer = 0;
-
+    private int pointer = 0;
     private ArrayList<String> error;
     private ArrayList<Lexema> lexema;
-
+    private ArrayList<Lexema> expression;
+    private ArrayList<Semantic> semanticTable;
     private final List<String> TYPE_SPEC_ARRAY = Arrays.asList("void", "float", "char", "int", "double");
 
     public ArrayList<String> getError() {
         return this.error;
     }
 
+    public ArrayList<Semantic> getSemanticTable() {
+        return this.semanticTable;
+    }
+
     public Lexema getItem() {
         if (this.pointer >= this.lexema.size()) {
             Lexema lastItem = this.lexema.get(this.lexema.size() - 1);
 
-            return new Lexema(Token.TK_END, "END", lastItem.getLine());
+            return new Lexema(Token.TK_END, "END", lastItem.getLine(), lastItem.getScope());
         }
 
         return this.lexema.get(this.pointer);
@@ -52,9 +56,26 @@ public class Sintatic {
         return newLexema;
     }
 
+    private void clearExpression() {
+        this.expression = new ArrayList<>();
+    }
+
+    private void addExpression(Lexema item) {
+        this.expression.add(item);
+    }
+
+    private void saveExpression(ArrayList<Lexema> expression, String type) {
+        Semantic semantic = new Semantic(expression, type);
+
+        semanticTable.add(semantic);
+
+        this.clearExpression();
+    }
+
     public Sintatic(ArrayList<Lexema> lexema) {
         this.error = new ArrayList<>();
         this.lexema = filterDirectives(lexema);
+        this.semanticTable = new ArrayList<>();
 
         this.decl();
     }
@@ -111,13 +132,17 @@ public class Sintatic {
     }
 
     public void decl() {
+        this.clearExpression();
+
         Lexema item = this.getItem();
 
         if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
+            this.addExpression(item);
             this.increasePointer();
             item = this.getItem();
 
             if (item.getToken().equals(Token.TK_ID)) {
+                this.addExpression(item);
                 this.increasePointer();
 
                 this.decl_1();
@@ -148,13 +173,21 @@ public class Sintatic {
         Lexema item = this.getItem();
 
         if (item.getToken().equals(Token.TK_FDI)) {
+            this.addExpression(item);
+            this.saveExpression(expression, "var_decl");
+
             this.increasePointer();
             this.continueAnaliser();
         } else if (item.getToken().equals(Token.TK_VIR)) {
+            this.addExpression(item);
+            this.saveExpression(expression, "var_decl");
+
             this.increasePointer();
             item = this.getItem();
 
             if (item.getToken().equals(Token.TK_ID)) {
+                this.addExpression(item);
+
                 this.increasePointer();
                 this.var_decl();
             } else {
@@ -162,14 +195,21 @@ public class Sintatic {
                 this.errorSkype();
             }
         } else if (item.getToken().equals(Token.TK_APR)) {
+            this.addExpression(item);
+
             this.increasePointer();
             item = this.getItem();
 
             if (item.getToken().equals(Token.TK_FPR)) {
+                this.addExpression(item);
+
                 this.increasePointer();
                 item = this.getItem();
 
                 if (item.getToken().equals(Token.TK_FDI)) {
+                    this.addExpression(item);
+                    this.saveExpression(expression, "var_decl_array");
+
                     this.increasePointer();
                     this.continueAnaliser();
                 } else {
@@ -181,6 +221,7 @@ public class Sintatic {
                 this.errorSkype();
             }
         } else if (item.getToken().equals(Token.TK_IG)) {
+            this.addExpression(item);
             this.increasePointer();
             item = this.getItem();
 
@@ -189,8 +230,27 @@ public class Sintatic {
                     item = this.getItem();
 
                     if (item.getToken().equals(Token.TK_FDI)) {
+                        this.addExpression(item);
+                        this.saveExpression(expression, "var_decl_equal");
+
                         this.increasePointer();
                         this.continueAnaliser();
+                    } else if (item.getToken().equals(Token.TK_VIR)) {
+                        this.addExpression(item);
+                        this.saveExpression(expression, "var_decl_equal");
+
+                        this.increasePointer();
+                        item = this.getItem();
+
+                        if (item.getToken().equals(Token.TK_ID)) {
+                            this.addExpression(item);
+
+                            this.increasePointer();
+                            this.var_decl();
+                        } else {
+                            this.error.add("Esperava receber um ID na linha: " + item.getLine());
+                            this.errorSkype();
+                        }
                     } else {
                         this.error.add("Esperava receber ; na linha: " + item.getLine());
                         this.errorSkype();
@@ -210,6 +270,7 @@ public class Sintatic {
         Lexema item = this.getItem();
 
         if (item.getToken().equals(Token.TK_AP)) {
+            this.addExpression(item);
             this.increasePointer();
             item = this.getItem();
 
@@ -223,10 +284,14 @@ public class Sintatic {
                 this.errorSkype();
                 return;
             }
+            this.addExpression(item);
             this.increasePointer();
             item = this.getItem();
 
             if (item.getToken().equals(Token.TK_FDI)) {
+                this.addExpression(item);
+                this.saveExpression(expression, "fun_decl_prototype");
+
                 this.increasePointer();
                 this.continueAnaliser();
                 return;
@@ -234,6 +299,9 @@ public class Sintatic {
             item = this.getItem();
 
             if (this.isComStmtFirst(item)) {
+                this.addExpression(item);
+                this.saveExpression(expression, "fun_decl");
+
                 this.com_stmt(false);
             } else {
                 this.error.add("Esperava receber {  na linha: " + item.getLine());
@@ -249,13 +317,20 @@ public class Sintatic {
         Lexema item = this.getItem();
 
         if (item.getToken().equals(Token.TK_FDI)) {
+            this.addExpression(item);
+            this.saveExpression(expression, "var_decl");
+
             this.increasePointer();
             return this.local_decls();
         } else if (item.getToken().equals(Token.TK_VIR)) {
+            this.addExpression(item);
+            this.saveExpression(expression, "var_decl");
+
             this.increasePointer();
             item = this.getItem();
 
             if (item.getToken().equals(Token.TK_ID)) {
+                this.addExpression(item);
                 this.increasePointer();
                 return this.local_decl_1();
             } else {
@@ -264,14 +339,21 @@ public class Sintatic {
                 return false;
             }
         } else if (item.getToken().equals(Token.TK_APR)) {
+            this.addExpression(item);
+
             this.increasePointer();
             item = this.getItem();
 
             if (item.getToken().equals(Token.TK_FPR)) {
+                this.addExpression(item);
+
                 this.increasePointer();
                 item = this.getItem();
 
                 if (item.getToken().equals(Token.TK_FDI)) {
+                    this.addExpression(item);
+                    this.saveExpression(expression, "var_decl_array");
+
                     this.increasePointer();
                     return this.local_decls();
                 } else {
@@ -285,6 +367,8 @@ public class Sintatic {
                 return false;
             }
         } else if (item.getToken().equals(Token.TK_IG)) {
+            this.addExpression(item);
+
             this.increasePointer();
             item = this.getItem();
 
@@ -293,8 +377,27 @@ public class Sintatic {
                     item = this.getItem();
 
                     if (item.getToken().equals(Token.TK_FDI)) {
+                        this.addExpression(item);
+                        this.saveExpression(expression, "var_decl_equal");
+
                         this.increasePointer();
                         return this.local_decls();
+                    } else if (item.getToken().equals(Token.TK_VIR)) {
+                        this.addExpression(item);
+                        this.saveExpression(expression, "var_decl_equal");
+
+                        this.increasePointer();
+                        item = this.getItem();
+
+                        if (item.getToken().equals(Token.TK_ID)) {
+                            this.addExpression(item);
+                            this.increasePointer();
+                            return this.local_decl_1();
+                        } else {
+                            this.error.add("Esperava receber um ID na linha: " + item.getLine());
+                            this.errorSkype();
+                            return false;
+                        }
                     } else {
                         this.error.add("Esperava receber ; na linha: " + item.getLine());
                         this.errorSkype();
@@ -316,13 +419,17 @@ public class Sintatic {
     }
 
     public boolean local_decls() {
+        this.clearExpression();
         Lexema item = this.getItem();
 
         if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
+            this.addExpression(item);
+
             this.increasePointer();
             item = this.getItem();
 
             if (item.getToken().equals(Token.TK_ID)) {
+                this.addExpression(item);
                 this.increasePointer();
 
                 if (this.local_decl_1()) {
@@ -405,6 +512,9 @@ public class Sintatic {
                 item = this.getItem();
 
                 if (item.getToken().equals(Token.TK_FDI)) {
+                    this.addExpression(item);
+                    this.saveExpression(expression, "exp_stmt");
+
                     this.increasePointer();
                     return true;
                 } else {
@@ -586,6 +696,7 @@ public class Sintatic {
             return false;
         }
         this.increasePointer();
+        item = this.getItem();
 
         if (!isExpFirst(item)) {
             this.error.add("Esperava receber ID ! + int float... na linha: " + item.getLine());
@@ -604,6 +715,7 @@ public class Sintatic {
             return false;
         }
         this.increasePointer();
+        item = this.getItem();
 
         if (!isExpFirst(item)) {
             this.error.add("Esperava receber ID ! + int float... na linha: " + item.getLine());
@@ -623,6 +735,7 @@ public class Sintatic {
             return false;
         }
         this.increasePointer();
+        item = this.getItem();
 
         if (!isStmtFirst(item)) {
             this.error.add("Esperava receber um statment na linha: " + item.getLine());
@@ -655,6 +768,7 @@ public class Sintatic {
                 return false;
             }
             this.increasePointer();
+            item = this.getItem();
 
             if (!isExpFirst(item)) {
                 this.error.add("Esperava receber um ID + ! int, float... na linha: " + item.getLine());
@@ -761,6 +875,7 @@ public class Sintatic {
         Lexema item = this.getItem();
 
         if (item.getLexema().equals(Token.TK_VOID)) {
+            this.addExpression(item);
             this.increasePointer();
             return true;
         }
@@ -776,10 +891,12 @@ public class Sintatic {
         Lexema item = this.getItem();
 
         if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
+            this.addExpression(item);
             this.increasePointer();
             item = this.getItem();
 
             if (item.getToken().equals(Token.TK_ID)) {
+                this.addExpression(item);
                 this.increasePointer();
 
                 if (this.param_1()) {
@@ -801,10 +918,12 @@ public class Sintatic {
         Lexema item = this.getItem();
 
         if (item.getToken().equals(Token.TK_APR)) {
+            this.addExpression(item);
             this.increasePointer();
             item = this.getItem();
 
             if (item.getToken().equals(Token.TK_FPR)) {
+                this.addExpression(item);
                 this.increasePointer();
                 return this.param_2();
             } else {
@@ -813,14 +932,17 @@ public class Sintatic {
                 return false;
             }
         } else if (item.getToken().equals(Token.TK_VIR)) {
+            this.addExpression(item);
             this.increasePointer();
             item = this.getItem();
 
             if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
+                this.addExpression(item);
                 this.increasePointer();
                 item = this.getItem();
 
                 if (item.getToken().equals(Token.TK_ID)) {
+                    this.addExpression(item);
                     this.increasePointer();
                     return this.param_1();
                 } else {
@@ -871,6 +993,8 @@ public class Sintatic {
         Lexema item = this.getItem();
 
         if (item.getToken().equals(Token.TK_ID)) {
+            this.addExpression(item);
+
             this.increasePointer();
 
             if (this.exp_1()) {
@@ -883,7 +1007,9 @@ public class Sintatic {
                 return false;
             }
         } else if (item.getLexema().equals("+") || item.getLexema().equals("-") || item.getLexema().equals("!")) {
+            this.addExpression(item);
             this.increasePointer();
+            item = this.getItem();
 
             if (this.isExpFirst(item)) {
                 if (this.exp()) {
@@ -902,6 +1028,7 @@ public class Sintatic {
             }
         } else if (item.getToken().equals(Token.TK_NF) || item.getToken().equals(Token.TK_NI)
                 || item.getToken().equals(Token.TK_CH)) {
+            this.addExpression(item);
             this.increasePointer();
 
             if (this.exp_3()) {
@@ -918,13 +1045,16 @@ public class Sintatic {
         Lexema item = this.getItem();
 
         if (item.getToken().equals(Token.TK_APR)) {
+            this.addExpression(item);
             this.increasePointer();
+            item = this.getItem();
 
             if (isExpFirst(item)) {
                 if (this.exp()) {
                     item = this.getItem();
 
                     if (item.getToken().equals(Token.TK_FPR)) {
+                        this.addExpression(item);
                         this.increasePointer();
 
                         if (this.exp_2()) {
@@ -946,10 +1076,12 @@ public class Sintatic {
                 return false;
             }
         } else if (item.getToken().equals(Token.TK_PONT)) {
+            this.addExpression(item);
             this.increasePointer();
             item = this.getItem();
 
             if (item.getLexema().equals("sizeof")) {
+                this.addExpression(item);
                 this.increasePointer();
                 return true;
             } else {
@@ -958,12 +1090,14 @@ public class Sintatic {
                 return false;
             }
         } else if (item.getToken().equals(Token.TK_AP)) {
+            this.addExpression(item);
             this.increasePointer();
 
             if (this.args()) {
                 item = this.getItem();
 
                 if (item.getToken().equals(Token.TK_FP)) {
+                    this.addExpression(item);
                     this.increasePointer();
                     return true;
                 } else {
@@ -975,9 +1109,11 @@ public class Sintatic {
                 return false;
             }
         } else if (item.getToken().equals(Token.TK_MA)) {
+            this.addExpression(item);
             this.increasePointer();
             return true;
         } else if (item.getToken().equals(Token.TK_MEM)) {
+            this.addExpression(item);
             this.increasePointer();
             return true;
         }
@@ -989,7 +1125,9 @@ public class Sintatic {
         Lexema item = this.getItem();
 
         if (item.getToken().equals(Token.TK_IG)) {
+            this.addExpression(item);
             this.increasePointer();
+            item = this.getItem();
 
             if (this.isExpFirst(item)) {
                 if (this.exp()) {
@@ -1018,6 +1156,7 @@ public class Sintatic {
                 || item.getToken().equals(Token.TK_PERCENT) || item.getToken().equals(Token.TK_AST)
                 || item.getToken().equals(Token.TK_DIV)
                 || item.getToken().equals(Token.TK_MI) || item.getToken().equals(Token.TK_MEMI)) {
+            this.addExpression(item);
             this.increasePointer();
             item = this.getItem();
 
@@ -1063,7 +1202,9 @@ public class Sintatic {
         Lexema item = this.getItem();
 
         if (item.getToken().equals(Token.TK_VIR)) {
+            this.addExpression(item);
             this.increasePointer();
+            item = this.getItem();
 
             if (isExpFirst(item)) {
                 if (this.exp()) {

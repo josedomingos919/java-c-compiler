@@ -5,11 +5,13 @@ public class Lexema {
     private String lexema;
     private int line;
     private int index;
+    private int scope;
 
-    public Lexema(String token, String lexema, int line) {
+    public Lexema(String token, String lexema, int line, int scope) {
         this.token = token;
         this.lexema = lexema;
         this.line = line;
+        this.scope = scope;
     }
 
     public void setIndex(int index) {
@@ -26,6 +28,10 @@ public class Lexema {
 
     public int getLine() {
         return this.line;
+    }
+
+    public int getScope() {
+        return this.scope;
     }
 
     public String getToken() {

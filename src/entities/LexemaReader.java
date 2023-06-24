@@ -7,9 +7,9 @@ import java.util.regex.*;
 import conts.Keywords;
 
 public class LexemaReader {
-
     private int index;
     private int line = 1;
+    private int scope = 0;
     public char[] input;
     private String lexema;
     private ArrayList<Lexema> lexemas;
@@ -188,6 +188,8 @@ public class LexemaReader {
         }
         // open key
         else if (value.equals("{")) {
+            scope++;
+
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_37();
@@ -196,6 +198,8 @@ public class LexemaReader {
         }
         // close key
         else if (value.equals("}")) {
+            scope--;
+
             addCharToLexema(value);
             increaseIndex();
             goStatusFinal_38();
@@ -337,14 +341,14 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_2() {
-        lexemas.add(new Lexema(Token.TK_ID, lexema, line));
+        lexemas.add(new Lexema(Token.TK_ID, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_3() {
-        lexemas.add(new Lexema(Token.TK_AP, lexema, line));
+        lexemas.add(new Lexema(Token.TK_AP, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -396,21 +400,21 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_7() {
-        lexemas.add(new Lexema(Token.TK_NF, lexema, line));
+        lexemas.add(new Lexema(Token.TK_NF, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_8() {
-        lexemas.add(new Lexema(Token.TK_NI, lexema, line));
+        lexemas.add(new Lexema(Token.TK_NI, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_9() {
-        lexemas.add(new Lexema(Token.TK_FDI, lexema, line));
+        lexemas.add(new Lexema(Token.TK_FDI, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -433,21 +437,21 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_11() {
-        lexemas.add(new Lexema(Token.TK_MA, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MA, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_12() {
-        lexemas.add(new Lexema(Token.TK_MI, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MI, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_13() {
-        lexemas.add(new Lexema(Token.TK_M, lexema, line));
+        lexemas.add(new Lexema(Token.TK_M, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -478,7 +482,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_16() {
-        lexemas.add(new Lexema(Token.TK_CH, lexema, line));
+        lexemas.add(new Lexema(Token.TK_CH, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -504,7 +508,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_18() {
-        lexemas.add(new Lexema(Token.TK_ST, lexema, line));
+        lexemas.add(new Lexema(Token.TK_ST, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -531,28 +535,28 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_20() {
-        lexemas.add(new Lexema(Token.TK_MEN, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MEN, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_21() {
-        lexemas.add(new Lexema(Token.TK_MEM, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MEM, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_22() {
-        lexemas.add(new Lexema(Token.TK_MEMI, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MEMI, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_23() {
-        lexemas.add(new Lexema(Token.TK_MEMM, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MEMM, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -583,21 +587,21 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_25() {
-        lexemas.add(new Lexema(Token.TK_MENR, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MENR, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_26() {
-        lexemas.add(new Lexema(Token.TK_MENRI, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MENRI, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_27() {
-        lexemas.add(new Lexema(Token.TK_MMOR, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MMOR, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -620,21 +624,21 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_29() {
-        lexemas.add(new Lexema(Token.TK_MAIORM, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MAIORM, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_30() {
-        lexemas.add(new Lexema(Token.TK_MAIOI, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MAIOI, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_31() {
-        lexemas.add(new Lexema(Token.TK_MAIOR, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MAIOR, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -653,56 +657,56 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_33() {
-        lexemas.add(new Lexema(Token.TK_ASTI, lexema, line));
+        lexemas.add(new Lexema(Token.TK_ASTI, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_34() {
-        lexemas.add(new Lexema(Token.TK_AST, lexema, line));
+        lexemas.add(new Lexema(Token.TK_AST, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_35() {
-        lexemas.add(new Lexema(Token.TK_IG, lexema, line));
+        lexemas.add(new Lexema(Token.TK_IG, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_36() {
-        lexemas.add(new Lexema(Token.TK_FP, lexema, line));
+        lexemas.add(new Lexema(Token.TK_FP, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_37() {
-        lexemas.add(new Lexema(Token.TK_ABC, lexema, line));
+        lexemas.add(new Lexema(Token.TK_ABC, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_38() {
-        lexemas.add(new Lexema(Token.TK_FCH, lexema, line));
+        lexemas.add(new Lexema(Token.TK_FCH, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_39() {
-        lexemas.add(new Lexema(Token.TK_APR, lexema, line));
+        lexemas.add(new Lexema(Token.TK_APR, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_40() {
-        lexemas.add(new Lexema(Token.TK_FPR, lexema, line));
+        lexemas.add(new Lexema(Token.TK_FPR, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -731,14 +735,14 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_43() {
-        lexemas.add(new Lexema(Token.TK_NOTI, lexema, line));
+        lexemas.add(new Lexema(Token.TK_NOTI, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_44() {
-        lexemas.add(new Lexema(Token.TK_EQUAL, lexema, line));
+        lexemas.add(new Lexema(Token.TK_EQUAL, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -765,14 +769,14 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_46() {
-        lexemas.add(new Lexema(Token.TK_BAREQ, lexema, line));
+        lexemas.add(new Lexema(Token.TK_BAREQ, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_47() {
-        lexemas.add(new Lexema(Token.TK_DIV, lexema, line));
+        lexemas.add(new Lexema(Token.TK_DIV, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -796,7 +800,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_49() {
-        lexemas.add(new Lexema(Token.TK_COMMENT, lexema, line));
+        lexemas.add(new Lexema(Token.TK_COMMENT, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -843,77 +847,77 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_52() {
-        lexemas.add(new Lexema(Token.TK_COMMENTP, lexema, line));
+        lexemas.add(new Lexema(Token.TK_COMMENTP, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_53() {
-        lexemas.add(new Lexema(Token.TK_VIR, lexema, line));
+        lexemas.add(new Lexema(Token.TK_VIR, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_54() {
-        lexemas.add(new Lexema(Token.TK_DOISP, lexema, line));
+        lexemas.add(new Lexema(Token.TK_DOISP, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_55() {
-        lexemas.add(new Lexema(Token.TK_PDE, lexema, line));
+        lexemas.add(new Lexema(Token.TK_PDE, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_56() {
-        lexemas.add(new Lexema(Token.TK_PONT, lexema, line));
+        lexemas.add(new Lexema(Token.TK_PONT, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_57() {
-        lexemas.add(new Lexema(Token.TK_AND, lexema, line));
+        lexemas.add(new Lexema(Token.TK_AND, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_58() {
-        lexemas.add(new Lexema(Token.TK_TIL, lexema, line));
+        lexemas.add(new Lexema(Token.TK_TIL, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_59() {
-        lexemas.add(new Lexema(Token.TK_PERCENT, lexema, line));
+        lexemas.add(new Lexema(Token.TK_PERCENT, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_60() {
-        lexemas.add(new Lexema(Token.TK_POW, lexema, line));
+        lexemas.add(new Lexema(Token.TK_POW, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_61() {
-        lexemas.add(new Lexema(Token.TK_BAR, lexema, line));
+        lexemas.add(new Lexema(Token.TK_BAR, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_62() {
-        lexemas.add(new Lexema(Token.TK_CARD, lexema, line));
+        lexemas.add(new Lexema(Token.TK_CARD, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -932,7 +936,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_64() {
-        lexemas.add(new Lexema(Token.TK_MMIG, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MMIG, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -951,7 +955,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_66() {
-        lexemas.add(new Lexema(Token.TK_MEMEIG, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MEMEIG, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -974,7 +978,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_68() {
-        lexemas.add(new Lexema(Token.TK_OR, lexema, line));
+        lexemas.add(new Lexema(Token.TK_OR, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -997,7 +1001,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_70() {
-        lexemas.add(new Lexema(Token.TK_ANDAND, lexema, line));
+        lexemas.add(new Lexema(Token.TK_ANDAND, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -1025,7 +1029,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_72() {
-        lexemas.add(new Lexema(Token.TK_CARDC, lexema, line));
+        lexemas.add(new Lexema(Token.TK_CARDC, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -1044,7 +1048,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_74() {
-        lexemas.add(new Lexema(Token.TK_IGIG, lexema, line));
+        lexemas.add(new Lexema(Token.TK_IGIG, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -1075,7 +1079,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_77() {
-        lexemas.add(new Lexema(Token.TK_PPP, lexema, line));
+        lexemas.add(new Lexema(Token.TK_PPP, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -1102,21 +1106,21 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_79() {
-        lexemas.add(new Lexema(Token.TK_PIG, lexema, line));
+        lexemas.add(new Lexema(Token.TK_PIG, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_80() {
-        lexemas.add(new Lexema(Token.TK_PIG, lexema, line));
+        lexemas.add(new Lexema(Token.TK_PIG, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_81() {
-        lexemas.add(new Lexema(Token.TK_ANDE, lexema, line));
+        lexemas.add(new Lexema(Token.TK_ANDE, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -1135,35 +1139,35 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_83() {
-        lexemas.add(new Lexema(Token.TK_POIG, lexema, line));
+        lexemas.add(new Lexema(Token.TK_POIG, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_84() {
-        lexemas.add(new Lexema(Token.TK_BARIG, lexema, line));
+        lexemas.add(new Lexema(Token.TK_BARIG, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_85() {
-        lexemas.add(new Lexema(Token.TK_MENPOIN, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MENPOIN, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_86() {
-        lexemas.add(new Lexema(Token.TK_MENPERC, lexema, line));
+        lexemas.add(new Lexema(Token.TK_MENPERC, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_87() {
-        lexemas.add(new Lexema(Token.TK_PERCMAIOR, lexema, line));
+        lexemas.add(new Lexema(Token.TK_PERCMAIOR, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -1182,7 +1186,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_89() {
-        lexemas.add(new Lexema(Token.TK_PERPOINT, lexema, line));
+        lexemas.add(new Lexema(Token.TK_PERPOINT, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -1201,14 +1205,14 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_91() {
-        lexemas.add(new Lexema(Token.TK_PERCT2, lexema, line));
+        lexemas.add(new Lexema(Token.TK_PERCT2, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
     }
 
     private void goStatusFinal_92() {
-        lexemas.add(new Lexema(Token.TK_KEYWORD, lexema, line));
+        lexemas.add(new Lexema(Token.TK_KEYWORD, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -1320,7 +1324,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_99() {
-        lexemas.add(new Lexema(Token.TK_DIRECTIV, lexema, line));
+        lexemas.add(new Lexema(Token.TK_DIRECTIV, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -1353,7 +1357,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_102() {
-        lexemas.add(new Lexema(Token.TK_DIRECTIV, lexema, line));
+        lexemas.add(new Lexema(Token.TK_DIRECTIV, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();
@@ -1404,7 +1408,7 @@ public class LexemaReader {
     }
 
     private void goStatusFinal_106() {
-        lexemas.add(new Lexema(Token.TK_ID, lexema, line));
+        lexemas.add(new Lexema(Token.TK_ID, lexema, line, scope));
 
         setLexemaEmpty();
         initialize();

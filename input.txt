@@ -1,11 +1,31 @@
+int soma(int a, int b);
+
+
+int teste() {
+    
+}
+
 int main() {
     int rest = 0;
 
+    int k, o, j = 0, u, x;
+    int b;
+
+    k = u + x;
+
+    int a = soma(b, 3);
+    
+    a = soma(b, 3);
+    
     teste();
     
     if(2 > 4) {}
     
     int s = 0;
 
-    return 0;
+    return 0; 
 }
+
+int soma(int a, int b) {
+    return a + b;
+}  
