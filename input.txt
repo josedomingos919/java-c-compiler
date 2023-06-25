@@ -1,18 +1,18 @@
 int soma(int a, int b);
 
-
 int teste() {
-    
+    int k;
 }
 
 int k;
 
 int main() {
     int rest = 0;
+ 
+    double bbb;
 
     int j = rest, u = 9, x;
-    int b;
-    int k;
+    int b; 
 
     k = u + x;
     k + 1;
