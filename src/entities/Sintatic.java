@@ -1027,7 +1027,7 @@ public class Sintatic {
                 return false;
             }
         } else if (item.getToken().equals(Token.TK_NF) || item.getToken().equals(Token.TK_NI)
-                || item.getToken().equals(Token.TK_CH)) {
+                || item.getToken().equals(Token.TK_CH) || item.getToken().equals(Token.TK_ST)) {
             this.addExpression(item);
             this.increasePointer();
 
@@ -1252,7 +1252,8 @@ public class Sintatic {
         return item.getToken().equals(Token.TK_ID) || item.getLexema().equals("+") || item.getLexema().equals("-")
                 || item.getLexema().equals("!")
                 || item.getToken().equals(Token.TK_NF) || item.getToken().equals(Token.TK_NI)
-                || item.getToken().equals(Token.TK_CH);
+                || item.getToken().equals(Token.TK_CH)
+                || item.getToken().equals(Token.TK_ST);
     }
 
     public boolean isStmtFirst(Lexema item) {

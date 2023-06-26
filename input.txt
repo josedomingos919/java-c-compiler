@@ -1,37 +1,22 @@
-int soma(int a, int b);
+int jose = 2;
 
-int teste() {
-    int k;
+int soma() {
+    return 1 + 1;
 }
 
-int k;
+float a = 289 + 3; 
 
-int main() {
-    int rest = 0;
- 
-    double bbb;
+int bbb;
 
-    int j = rest, u = 9, x;
-    int b; 
+void main() {  
+    char f = 'n';
+    char d = f;
 
-    k = u + x;
-    k + 1;
+    int j = 4565, u = 9, x, a, v[];
+    int a = soma( bbb, 3 ) + u + 23 + v[0] * 3;
 
-    int a = soma( bbb, 3 );
-    
-    a = soma(b, 3);
+    float a = soma() + 3; 
 
-    a = 488 + a + soma(3,5);
-    
-    teste();
-    
-    if(2 > 4) {}
-    
-    int s = 0;
-
-    return 0; 
+    return 0;
 }
 
-int soma(int a, int b) {
-    return a + b;
-}

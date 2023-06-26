@@ -14,8 +14,8 @@ public class SemanticReader {
         this.semanticTable = semanticTable;
         this.erros = new ArrayList<>();
 
-        this.checkDeclarationOfUsedVars();
-        this.checkDoubleVarDeclaration();
+        // this.checkDeclarationOfUsedVars();
+        // this.checkDoubleVarDeclaration();
         this.checkVarsValues();
     }
 
@@ -53,33 +53,30 @@ public class SemanticReader {
         return false;
     }
 
-    Semantic getVarFunDec(int startIndex, int endIndex, Lexema value) {
+    Semantic getVarFunDec(int startIndex, int endIndex, Lexema id) {
         for (int i = 0; i < endIndex; i++) {
-            Semantic item = semanticTable.get(i);
+            Semantic expression = semanticTable.get(i);
 
-            // filter var and function declaration
-            if (item.getType().equals("var_decl") ||
-                    item.getType().equals("fun_decl") ||
-                    item.getType().equals("var_decl_equal") ||
-                    item.getType().equals("fun_decl_prototype")) {
+            // verify scope
+            if (i >= startIndex || expression.getSignature().get(0).getScope() == 0)
+                // filter var and function declaration
+                if (expression.getType().equals("var_decl") ||
+                        expression.getType().equals("fun_decl") ||
+                        expression.getType().equals("var_decl_equal") ||
+                        expression.getType().equals("var_decl_array") ||
+                        expression.getType().equals("fun_decl_prototype")) {
 
-                ArrayList<Lexema> lexemas = item.getSignature();
-
-                // check top scope
-                if (i >= startIndex || lexemas.get(0).getScope() == 0) {
+                    ArrayList<Lexema> signature = expression.getSignature();
 
                     // check if ID exist in position 0 or 1 of declaration
-                    if (lexemas.get(0).getToken().equals(Token.TK_ID) &&
-                            lexemas.get(0).getLexema().equals(value.getLexema())) {
-                        this.varFunDecLastIndex = i + 1;
-                        return item;
-                    } else if (lexemas.get(1).getToken().equals(Token.TK_ID) &&
-                            lexemas.get(1).getLexema().equals(value.getLexema())) {
-                        this.varFunDecLastIndex = i + 1;
-                        return item;
+                    if (signature.get(0).getToken().equals(Token.TK_ID) &&
+                            signature.get(0).getLexema().equals(id.getLexema())) {
+                        return expression;
+                    } else if (signature.get(1).getToken().equals(Token.TK_ID) &&
+                            signature.get(1).getLexema().equals(id.getLexema())) {
+                        return expression;
                     }
                 }
-            }
         }
 
         return null;
@@ -186,11 +183,11 @@ public class SemanticReader {
         return vars;
     }
 
-    public Lexema getVarDataType(int index, Semantic expression) {
+    public Lexema getVarDataType(Semantic expression) {
         if (TYPE_SPEC_ARRAY.contains(expression.getSignature().get(0).getLexema()))
             return expression.getSignature().get(0);
 
-        for (int i = index; i > 0; i--) {
+        for (int i = expression.getIndex(); i > 0; i--) {
             if (TYPE_SPEC_ARRAY.contains(this.semanticTable.get(i).getSignature().get(0).getLexema()))
                 return this.semanticTable.get(i).getSignature().get(0);
         }
@@ -201,72 +198,196 @@ public class SemanticReader {
     // b) Compatibilidade de tipos, ou seja, uma variável do tipo inteiro não deve
     // receber por exemplo um valor do tipo string;
     public void checkVarsValues() {
-        int i = 0;
         int startIndex = 0;
 
         for (Semantic expression : this.semanticTable) {
             if (expression.getType().equals("fun_decl"))
-                startIndex = i;
+                startIndex = expression.getIndex();
 
+            // var_decl_equal
             if (expression.getType().equals("var_decl_equal")) {
-                Lexema DataType = this.getVarDataType(i, expression);
-                Lexema ID = getVarID(expression);
-                boolean canValidate = false;
-                boolean isValidValue = true;
-                String errorMessage = "";
+                Lexema varId = this.getVarID(expression);
+                Lexema varType = this.getVarDataType(expression);
+                Boolean canValidate = false;
+                Boolean hasIgual = false;
 
                 for (Lexema item : expression.getSignature()) {
                     // int
-                    if (canValidate && DataType.getLexema().equals("int")) {
-                        if (item.getToken().equals(Token.TK_NI) || item.getToken().equals(Token.TK_VIR)
-                                || item.getToken().equals(Token.TK_FDI)
-                                || item.getToken().equals(Token.TK_AP)
-                                || item.getToken().equals(Token.TK_FP)) {
+                    if (varType.getLexema().equals("int")) {
+                        // vaild token
+                        if (canValidate) {
+                            if (item.getToken().equals(Token.TK_NI) ||
+                                    item.getToken().equals(Token.TK_VIR) ||
+                                    item.getToken().equals(Token.TK_FDI) ||
+                                    item.getToken().equals(Token.TK_M) ||
+                                    item.getToken().equals(Token.TK_MEN) ||
+                                    item.getToken().equals(Token.TK_AST)
+
+                            ) {
+                                canValidate = true;
+                            } else if (item.getToken().equals(Token.TK_AP) || item.getToken().equals(Token.TK_APR)) {
+                                canValidate = false;
+                            } else if (item.getToken().equals(Token.TK_DIV)) {
+                                this.erros.add("Operador " + item.getLexema()
+                                        + " Nao pode ser usado na linha: "
+                                        + item.getLine());
+                                canValidate = false;
+                            } else if (item.getToken().equals(Token.TK_ID)) {
+                                Semantic idExpression = getVarFunDec(startIndex, expression.getIndex(), item);
+
+                                if (idExpression == null) {
+                                    this.erros.add("Variavel/Funcao " + item.getLexema() + " Nao declarado na linha: "
+                                            + item.getLine());
+                                    this.erros.add(
+                                            "Tipo de dados da variavel/funcao " + varId.getLexema()
+                                                    + " nao identificado na linha: "
+                                                    + item.getLine());
+                                    canValidate = false;
+                                } else {
+                                    Lexema idToken = getVarID(idExpression);
+                                    Lexema idType = getVarDataType(idExpression);
+
+                                    if (!idType.getLexema().equals("int")) {
+                                        this.erros.add(
+                                                "Tipo de dados da funcao/variavel " + idToken.getLexema()
+                                                        + " invalido na linha: "
+                                                        + item.getLine());
+                                        canValidate = false;
+                                    }
+                                }
+                            } else {
+                                this.erros.add(
+                                        "Valor invalido para variavel " + varId.getLexema() + " na linha: "
+                                                + item.getLine());
+                                canValidate = false;
+                            }
+                        } else if (item.getToken().equals(Token.TK_FP) || item.getToken().equals(Token.TK_FPR)) {
                             canValidate = true;
-                        }
-                        // ID Validate
-                        else if (item.getToken().equals(Token.TK_ID)) {
-                            Semantic idExpression = getVarFunDec(startIndex, i, item);
+                        } else if (item.getToken().equals(Token.TK_ID) && hasIgual && !canValidate) {
+                            Semantic idExpression = getVarFunDec(startIndex, expression.getIndex(), item);
 
                             if (idExpression == null) {
-                                canValidate = false;
-                                this.erros.add("Atribuicao invalida, Variavel/Funcao " + item.getLexema()
-                                        + " nao declarada " + ID.getLexema()
-                                        + " na linha: "
-                                        + item.getLine());
-                            } else {
-                                Lexema idDataType = this.getVarDataType(this.varFunDecLastIndex, expression);
-                                Lexema idExpID = getVarID(idExpression);
-
-                                System.out.println(this.varFunDecLastIndex + "____" + idExpID.getLexema() + "_____"
-                                        + idDataType.getLexema());
-
-                                if (!idDataType.getLexema().equals("int")) {
-                                    this.erros.add("Valor in valido para variavel/Funcao " + idExpID.getLexema()
-                                            + " na linha: "
-                                            + item.getLine());
-                                    canValidate = false;
-                                }
+                                this.erros.add(
+                                        "Variavel/funcao " + item.getLexema() + " nao declarada na linha: "
+                                                + item.getLine());
                             }
-                        } else {
-                            this.erros.add(
-                                    "Valor in valido para variavel " + ID.getLexema() + " na linha: " + item.getLine());
-                            canValidate = false;
                         }
                     }
 
+                    // float, double
+                    if (varType.getLexema().equals("float") || varType.getLexema().equals("double")) {
+                        // vaild token
+                        if (canValidate) {
+                            if (item.getToken().equals(Token.TK_NF) ||
+                                    item.getToken().equals(Token.TK_NI) ||
+                                    item.getToken().equals(Token.TK_VIR) ||
+                                    item.getToken().equals(Token.TK_FDI) ||
+                                    item.getToken().equals(Token.TK_M) ||
+                                    item.getToken().equals(Token.TK_MEN) ||
+                                    item.getToken().equals(Token.TK_AST) ||
+                                    item.getToken().equals(Token.TK_DIV)
+
+                            ) {
+                                canValidate = true;
+                            } else if (item.getToken().equals(Token.TK_AP) || item.getToken().equals(Token.TK_APR)) {
+                                canValidate = false;
+                            } else if (item.getToken().equals(Token.TK_ID)) {
+                                Semantic idExpression = getVarFunDec(startIndex, expression.getIndex(), item);
+
+                                if (idExpression == null) {
+                                    this.erros.add("Variavel/Funcao " + item.getLexema() + " Nao declarado na linha: "
+                                            + item.getLine());
+                                    this.erros.add(
+                                            "Tipo de dados da variavel/funcao " + varId.getLexema()
+                                                    + " nao identificado na linha: "
+                                                    + item.getLine());
+                                    canValidate = false;
+                                } else {
+                                    Lexema idToken = getVarID(idExpression);
+                                    Lexema idType = getVarDataType(idExpression);
+
+                                    if (!idType.getLexema().equals("float") &&
+                                            !idType.getLexema().equals("double") &&
+                                            !idType.getLexema().equals("int")) {
+                                        this.erros.add(
+                                                "Tipo de dados da funcao/variavel " + idToken.getLexema()
+                                                        + " invalido na linha: "
+                                                        + item.getLine());
+                                        canValidate = false;
+                                    }
+                                }
+                            } else {
+                                this.erros.add(
+                                        "Valor invalido para variavel " + varId.getLexema() + " na linha: "
+                                                + item.getLine());
+                                canValidate = false;
+                            }
+                        } else if (item.getToken().equals(Token.TK_FP) || item.getToken().equals(Token.TK_FPR)) {
+                            canValidate = true;
+                        } else if (item.getToken().equals(Token.TK_ID) && hasIgual && !canValidate) {
+                            Semantic idExpression = getVarFunDec(startIndex, expression.getIndex(), item);
+
+                            if (idExpression == null) {
+                                this.erros.add(
+                                        "Variavel/funcao " + item.getLexema() + " nao declarada na linha: "
+                                                + item.getLine());
+                            }
+                        }
+                    }
+
+                    // char
+                    if (varType.getLexema().equals("char")) {
+                        // vaild token
+                        if (canValidate) {
+                            if (item.getToken().equals(Token.TK_CH)) {
+                                canValidate = false;
+                            } else if (item.getToken().equals(Token.TK_ID)) {
+                                canValidate = false;
+                                Semantic idExpression = getVarFunDec(startIndex, expression.getIndex(), item);
+
+                                if (idExpression == null) {
+                                    this.erros.add("Variavel/Funcao " + item.getLexema() + " Nao declarado na linha: "
+                                            + item.getLine());
+                                    this.erros.add(
+                                            "Tipo de dados da variavel/funcao " + varId.getLexema()
+                                                    + " nao identificado na linha: "
+                                                    + item.getLine());
+
+                                } else {
+                                    Lexema idToken = getVarID(idExpression);
+                                    Lexema idType = getVarDataType(idExpression);
+
+                                    if (!idType.getLexema().equals("char")) {
+                                        this.erros.add(
+                                                "Tipo de dados da funcao/variavel " + idToken.getLexema()
+                                                        + " invalido na linha: "
+                                                        + item.getLine());
+                                    }
+                                }
+                            } else {
+                                this.erros.add(
+                                        "Valor invalido para variavel " + varId.getLexema() + " na linha: "
+                                                + item.getLine());
+                                canValidate = false;
+                            }
+                        } else if (item.getToken().equals(Token.TK_VIR) ||
+                                item.getToken().equals(Token.TK_FDI)) {
+                            canValidate = false;
+                        } else if (hasIgual && !canValidate) {
+                            this.erros.add(
+                                    "Valor invalido para variavel " + varId.getLexema() + " na linha: "
+                                            + item.getLine());
+                            hasIgual = false;
+                        }
+                    }
+
+                    // others
                     if (item.getToken().equals(Token.TK_IG)) {
                         canValidate = true;
+                        hasIgual = true;
                     }
                 }
-
-                if (!isValidValue) {
-                    this.erros.add(errorMessage);
-                }
-
             }
-
-            i++;
         }
     }
 }
