@@ -8,7 +8,6 @@ public class SemanticReader {
     private ArrayList<Semantic> semanticTable;
     private ArrayList<String> erros;
     private final List<String> TYPE_SPEC_ARRAY = Arrays.asList("void", "float", "char", "int", "double");
-    private int varFunDecLastIndex = 0;
 
     public SemanticReader(ArrayList<Semantic> semanticTable) {
         this.semanticTable = semanticTable;
@@ -16,7 +15,8 @@ public class SemanticReader {
 
         // this.checkDeclarationOfUsedVars();
         // this.checkDoubleVarDeclaration();
-        this.checkVarsValues();
+        // this.checkVarsValues();
+        this.checkMainDeclaration();
     }
 
     public ArrayList<String> getErros() {
@@ -389,5 +389,33 @@ public class SemanticReader {
                 }
             }
         }
+    }
+
+    // g) Fazer também a verificação do identificador principal (main) se foi bem
+    // declarada;
+    public void checkMainDeclaration() {
+        boolean hasMain = false;
+
+        for (Semantic expression : this.semanticTable) {
+            // var_decl_equalfun_decl
+            if (expression.getType().equals("fun_decl")) {
+                Lexema varId = this.getVarID(expression);
+                Lexema varType = this.getVarDataType(expression);
+
+                if (varId.getLexema().equals("main")) {
+                    hasMain = true;
+
+                    // data type
+                    if (!varType.getLexema().equals("int")) {
+                        this.erros.add(
+                                "O tipo de dados da funcao main precisa ser inteiro! na linha: "
+                                        + varType.getLine());
+                    }
+                }
+            }
+        }
+
+        if (!hasMain)
+            this.erros.add("funcao main nao foi declarada!");
     }
 }

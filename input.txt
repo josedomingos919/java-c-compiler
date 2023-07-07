@@ -8,7 +8,7 @@ float a = 289 + 3;
 
 int bbb;
 
-void main() {  
+int main() {  
     char f = 'n';
     char d = f;
 
