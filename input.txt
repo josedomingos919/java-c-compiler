@@ -1,3 +1,26 @@
-int main() { 
-    for(int a=0 ; a == 3 ; a++){}
+#include <stdio.h>
+#include <stdlib.h>
+
+int soma(int a, int b);
+
+int main() {  
+    int a = 23, b = 30;
+    soma(a, b);
+
+    for(i = 0; i< 10; i++) { 
+        if(i > 5){
+            a += 2;
+            break;
+        }
+    }
+
+    do {
+        a += 34;
+    } while(a < 30);
+
+    return 0;
+}
+
+int soma(int a, int b) {
+    return a + b;
 }

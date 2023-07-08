@@ -31,7 +31,7 @@ public class Main {
             printSemanticError();
 
             if (semanticReader.getErros().size() == 0) {
-                // printLexemas();
+                printLexemas();
             }
         }
 
@@ -75,6 +75,7 @@ public class Main {
 
     private static void printLexemas() {
         Formatter fmt = new Formatter();
+        fmt.format("%40s %40s %40s\n\n", "", "************Lexema************", "");
         fmt.format("%40s %40s %40s\n\n", "LEXEMA", "TOKEN", "LINHA");
 
         for (Lexema lexema : lexemaReader.getLexemas()) {
@@ -86,6 +87,7 @@ public class Main {
 
     private static void printSemanticTable() {
         Formatter fmt = new Formatter();
+        fmt.format("%40s %40s %40s\n\n", "", "************Semantico************", "");
         fmt.format("%40s %40s %40s\n\n", "TIPO", "ESCOPO", "EXPRESSAO");
 
         for (Semantic semantic : sintatic.getSemanticTable()) {

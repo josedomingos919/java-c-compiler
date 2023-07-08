@@ -13,11 +13,15 @@ public class SemanticReader {
         this.semanticTable = semanticTable;
         this.erros = new ArrayList<>();
 
-        // this.checkDeclarationOfUsedVars();
-        // this.checkDoubleVarDeclaration();
-        // this.checkVarsValues();
-        // this.checkMainDeclaration();
+        this.checkDeclarationOfUsedVars();
+        this.checkDoubleVarDeclaration();
+        this.checkVarsValues();
+        this.checkMainDeclaration();
         this.checkBooleanExpression();
+
+        // this.checkFunctionParams();
+        // this.checkPrintf();
+        // this.checkSanf();
     }
 
     public ArrayList<String> getErros() {
@@ -457,5 +461,41 @@ public class SemanticReader {
                 }
             }
         }
+    }
+
+    public void checkFunctionParams() {
+        int startIndex = 0;
+
+        for (Semantic expression : this.semanticTable) {
+            if (expression.getType().equals("fun_decl"))
+                startIndex = expression.getIndex();
+
+            if (!expression.getType().equals("exp_stmt"))
+                continue;
+
+            for (int i = 0; i < expression.getSignature().size(); i++) {
+                if (expression.getSignature().get(i).getToken().equals(Token.TK_ID)
+                        && expression.getSignature().get(i + 1).getToken().equals(Token.TK_AP)) {
+                    ArrayList<Lexema> listParams = new ArrayList<>();
+                    ArrayList<Lexema> listParamsTypes = new ArrayList<>();
+                    Semantic sintaxiFun = getVarFunDec(startIndex, i, expression.getSignature().get(i));
+                    int j;
+
+                    for (j = i; j < expression.getSignature().size()
+                            && expression.getSignature().get(j).getLexema().equals(")"); j++) {
+
+                        if (!expression.getSignature().get(j).getLexema().equals("(")
+                                && !expression.getSignature().get(j).equals(")")
+                                && !expression.getSignature().get(j).equals(","))
+                            listParams.add(expression.getSignature().get(j));
+                    }
+
+                    i = j;
+                }
+            }
+        }
+    }
+
+    public void validateList() {
     }
 }
