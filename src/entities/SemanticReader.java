@@ -16,7 +16,8 @@ public class SemanticReader {
         // this.checkDeclarationOfUsedVars();
         // this.checkDoubleVarDeclaration();
         // this.checkVarsValues();
-        this.checkMainDeclaration();
+        // this.checkMainDeclaration();
+        this.checkBooleanExpression();
     }
 
     public ArrayList<String> getErros() {
@@ -417,5 +418,44 @@ public class SemanticReader {
 
         if (!hasMain)
             this.erros.add("funcao main nao foi declarada!");
+    }
+
+    public void checkBooleanExpression() {
+        for (Semantic expression : this.semanticTable) {
+            if (expression.getType().equals("if_stmt") ||
+                    expression.getType().equals("while_stmt") ||
+                    expression.getType().equals("do_while_stmt")) {
+                boolean isBoolean = false;
+
+                for (Lexema item : expression.getSignature()) {
+                    if (Arrays.asList("==", ">=", "<=", "&&", "||", "!=", ">", "<").contains(item.getLexema()))
+                        isBoolean = true;
+                }
+
+                if (!isBoolean && expression.getSignature().size() != 4) {
+                    this.erros
+                            .add("Expressao boleana faltando na linha: " + expression.getSignature().get(0).getLine());
+                }
+            }
+
+            if (expression.getType().equals("for_stmt")) {
+                boolean isBoolean = false;
+                boolean canValidate = false;
+
+                for (Lexema item : expression.getSignature()) {
+                    if (item.getLexema().equals(";"))
+                        canValidate = !canValidate;
+
+                    if (canValidate
+                            && Arrays.asList("==", ">=", "<=", "&&", "||", "!=", ">", "<").contains(item.getLexema()))
+                        isBoolean = true;
+                }
+
+                if (!isBoolean) {
+                    this.erros
+                            .add("Expressao boleana faltando na linha: " + expression.getSignature().get(0).getLine());
+                }
+            }
+        }
     }
 }

@@ -43,7 +43,8 @@
                         <break_stmt>    |
                         <for_stmt>      |
                         <printf_stmt>   |
-                        <scanf_stmt>
+                        <scanf_stmt>    |
+                        <do_stmt>
 
 <exp_stmt>      ::=     ";"     |
                         <exp>";"
@@ -53,6 +54,8 @@
 <content>       ::=     <local_decls><content>  |
                         <stmt><content>         |
                         <vazio>
+                    
+<do_stmt>       ::=     "do"<stmt>"while""("<exp>")"";"
 
 <while_stmt>    ::=     "while""("<exp>")"<stmt>
 

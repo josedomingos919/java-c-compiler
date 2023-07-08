@@ -550,13 +550,19 @@ public class Sintatic {
     }
 
     public boolean if_stmt() {
+        this.clearExpression();
+
         Lexema item = this.getItem();
 
         if (item.getLexema().equals("if")) {
+            this.addExpression(item);
+
             this.increasePointer();
             item = this.getItem();
 
             if (item.getToken().equals(Token.TK_AP)) {
+                this.addExpression(item);
+
                 this.increasePointer();
                 item = this.getItem();
 
@@ -565,6 +571,9 @@ public class Sintatic {
                         item = this.getItem();
 
                         if (item.getToken().equals(Token.TK_FP)) {
+                            this.addExpression(item);
+                            this.saveExpression(expression, "if_stmt");
+
                             this.increasePointer();
                             item = this.getItem();
 
@@ -664,17 +673,103 @@ public class Sintatic {
             return this.break_stmt();
         } else if (item.getLexema().equals("for")) {
             return this.for_stmt();
+        } else if (item.getLexema().equals("do")) {
+            return this.do_stmt();
+        } else {
+            return false;
+        }
+    }
+
+    public boolean do_stmt() {
+        this.clearExpression();
+        Lexema item = this.getItem();
+
+        if (item.getLexema().equals("do")) {
+            this.addExpression(item);
+            this.saveExpression(expression, "do_stmt");
+
+            this.increasePointer();
+            item = this.getItem();
+
+            if (isStmtFirst(item)) {
+                if (this.stmt()) {
+                    item = this.getItem();
+
+                    if (item.getLexema().equals("while")) {
+                        this.clearExpression();
+                        this.addExpression(item);
+
+                        this.increasePointer();
+                        item = this.getItem();
+
+                        if (!item.getLexema().equals("(")) {
+                            this.error.add("Esperava receber ( na linha: " + item.getLine());
+                            this.errorSkype();
+                            return false;
+                        }
+
+                        this.addExpression(item);
+                        this.increasePointer();
+                        item = this.getItem();
+
+                        if (!isExpFirst(item)) {
+                            this.error.add("Esperava receber ID ! + int float... na linha: " + item.getLine());
+                            this.errorSkype();
+                            return false;
+                        }
+
+                        if (this.exp()) {
+                            item = this.getItem();
+
+                            if (!item.getLexema().equals(")")) {
+                                this.error.add("Esperava receber ) na linha: " + item.getLine());
+                                this.errorSkype();
+                                return false;
+                            }
+                            this.addExpression(item);
+                            this.saveExpression(expression, "do_while_stmt");
+
+                            this.increasePointer();
+                            item = this.getItem();
+
+                            if (!item.getLexema().equals(";")) {
+                                this.error.add("Esperava receber ; na linha: " + item.getLine());
+                                this.errorSkype();
+                                return false;
+                            }
+
+                            this.increasePointer();
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        this.error.add("Esperava receber while na linha: " + item.getLine());
+                        this.errorSkype();
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                this.error.add("Esperava receber um statment na linha: " + item.getLine());
+                this.errorSkype();
+                return false;
+            }
         } else {
             return false;
         }
     }
 
     public boolean for_stmt() {
+        this.clearExpression();
         Lexema item = this.getItem();
 
         if (!item.getLexema().equals("for")) {
             return false;
         }
+        this.addExpression(item);
+
         this.increasePointer();
         item = this.getItem();
 
@@ -683,6 +778,7 @@ public class Sintatic {
             this.errorSkype();
             return false;
         }
+        this.addExpression(item);
         this.increasePointer();
 
         if (!this.for_stmt_1()) {
@@ -695,6 +791,7 @@ public class Sintatic {
             this.errorSkype();
             return false;
         }
+        this.addExpression(item);
         this.increasePointer();
         item = this.getItem();
 
@@ -714,6 +811,7 @@ public class Sintatic {
             this.errorSkype();
             return false;
         }
+        this.addExpression(item);
         this.increasePointer();
         item = this.getItem();
 
@@ -734,6 +832,9 @@ public class Sintatic {
             this.errorSkype();
             return false;
         }
+        this.addExpression(item);
+        this.saveExpression(expression, "for_stmt");
+
         this.increasePointer();
         item = this.getItem();
 
@@ -750,6 +851,7 @@ public class Sintatic {
         Lexema item = this.getItem();
 
         if (TYPE_SPEC_ARRAY.contains(item.getLexema())) {
+            this.addExpression(item);
             this.increasePointer();
             item = this.getItem();
 
@@ -758,6 +860,7 @@ public class Sintatic {
                 this.errorSkype();
                 return false;
             }
+            this.addExpression(item);
             this.increasePointer();
 
             item = this.getItem();
@@ -767,6 +870,7 @@ public class Sintatic {
                 this.errorSkype();
                 return false;
             }
+            this.addExpression(item);
             this.increasePointer();
             item = this.getItem();
 
@@ -809,13 +913,18 @@ public class Sintatic {
     }
 
     public boolean while_stmt() {
+        this.clearExpression();
         Lexema item = this.getItem();
 
         if (item.getLexema().equals("while")) {
+            this.addExpression(item);
+
             this.increasePointer();
             item = this.getItem();
 
             if (item.getToken().equals(Token.TK_AP)) {
+                this.addExpression(item);
+
                 this.increasePointer();
                 item = this.getItem();
 
@@ -824,6 +933,9 @@ public class Sintatic {
                         item = this.getItem();
 
                         if (item.getToken().equals(Token.TK_FP)) {
+                            this.addExpression(item);
+                            this.saveExpression(expression, "while_stmt");
+
                             this.increasePointer();
                             item = this.getItem();
 
@@ -1262,6 +1374,7 @@ public class Sintatic {
                 || item.getLexema().equals("while")
                 || item.getLexema().equals("return")
                 || item.getLexema().equals("break")
+                || item.getLexema().equals("do")
                 || item.getLexema().equals("for");
     }
 }

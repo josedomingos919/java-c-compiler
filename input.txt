@@ -1,22 +1,3 @@
-int jose = 2;
-
-int soma() {
-    return 1 + 1;
+int main() { 
+    for(int a=0 ; a == 3 ; a++){}
 }
-
-float a = 289 + 3; 
-
-int bbb;
-
-int main() {  
-    char f = 'n';
-    char d = f;
-
-    int j = 4565, u = 9, x, a, v[];
-    int a = soma( bbb, 3 ) + u + 23 + v[0] * 3;
-
-    float a = soma() + 3; 
-
-    return 0;
-}
-
