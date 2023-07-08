@@ -1,26 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int soma(int a, int b);
-
 int main() {  
-    int a = 23, b = 30;
-    soma(a, b);
+    int a = soma(5 + 5);
 
-    for(i = 0; i< 10; i++) { 
-        if(i > 5){
-            a += 2;
-            break;
-        }
-    }
+    int k = 4 + 4 + 4.5; 
 
-    do {
-        a += 34;
-    } while(a < 30);
+    int y = rest, y = 55;
 
-    return 0;
+    char n = '\n';
+
+    int v = n;
 }
 
 int soma(int a, int b) {
-    return a + b;
+    return a+b;
 }
