@@ -6,7 +6,9 @@ int soma(int a, char b) {
 }
 
 int main() {  
+    int s = '\n';
+
     float f = 3.4;
 
-    soma(5, 7);
+    soma('\n', 'd');
 }

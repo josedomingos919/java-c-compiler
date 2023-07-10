@@ -13,13 +13,13 @@ public class SemanticReader {
         this.semanticTable = semanticTable;
         this.erros = new ArrayList<>();
 
-        //this.checkDeclarationOfUsedVars();
-        //this.checkDoubleVarDeclaration();
-        //this.checkVarsValues();
-        //this.checkMainDeclaration();
-        //this.checkBooleanExpression();
-
+        this.checkDeclarationOfUsedVars();
+        this.checkDoubleVarDeclaration();
+        this.checkVarsValues();
+        this.checkMainDeclaration();
+        this.checkBooleanExpression();
         this.checkFunctionParams();
+
         // this.checkPrintf();
         // this.checkSanf();
     }
@@ -222,12 +222,12 @@ public class SemanticReader {
                         // vaild token
                         if (canValidate) {
                             if (item.getToken().equals(Token.TK_NI) ||
+                                    item.getToken().equals(Token.TK_CH) ||
                                     item.getToken().equals(Token.TK_VIR) ||
                                     item.getToken().equals(Token.TK_FDI) ||
                                     item.getToken().equals(Token.TK_M) ||
                                     item.getToken().equals(Token.TK_MEN) ||
-                                    item.getToken().equals(Token.TK_AST)
-
+                                    item.getToken().equals(Token.TK_AST)  
                             ) {
                                 canValidate = true;
                             } else if (item.getToken().equals(Token.TK_AP) || item.getToken().equals(Token.TK_APR)) {
@@ -508,7 +508,9 @@ public class SemanticReader {
                         erros.add("Numero de parametros incompativeis na linha: " + expression.getSignature().get(i).getLine());
                     }else {
                         for(int y = 0; y < listParams.size() ; y++) {
-                            if(listParamsTypes.get(y).getLexema().equals("int") && listParams.get(y).getToken() != Token.TK_NI){
+                            if( listParamsTypes.get(y).getLexema().equals("int") && listParams.get(y).getToken() != Token.TK_NI && 
+                                listParamsTypes.get(y).getLexema().equals("int") && listParams.get(y).getToken() != Token.TK_CH
+                            ){
                                 this.erros.add("Esperava receber um inteiro no parametro nº "+ (y + 1) +" da funcao "+ expression.getSignature().get(i).getLexema() +" na linha: " + expression.getSignature().get(j).getLine());
                             }
 
