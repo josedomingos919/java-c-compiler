@@ -1,18 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main() {  
-    int a = soma(5 + 5);
-
-    int k = 4 + 4 + 4.5; 
-
-    int y = rest, y = 55;
-
-    char n = '\n';
-
-    int v = n;
+int soma(int a, char b) {
+    return a+b;
 }
 
-int soma(int a, int b) {
-    return a+b;
+int main() {  
+    float f = 3.4;
+
+    soma(5, 7);
 }

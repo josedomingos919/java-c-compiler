@@ -13,13 +13,13 @@ public class SemanticReader {
         this.semanticTable = semanticTable;
         this.erros = new ArrayList<>();
 
-        this.checkDeclarationOfUsedVars();
-        this.checkDoubleVarDeclaration();
-        this.checkVarsValues();
-        this.checkMainDeclaration();
-        this.checkBooleanExpression();
+        //this.checkDeclarationOfUsedVars();
+        //this.checkDoubleVarDeclaration();
+        //this.checkVarsValues();
+        //this.checkMainDeclaration();
+        //this.checkBooleanExpression();
 
-        // this.checkFunctionParams();
+        this.checkFunctionParams();
         // this.checkPrintf();
         // this.checkSanf();
     }
@@ -475,19 +475,59 @@ public class SemanticReader {
 
             for (int i = 0; i < expression.getSignature().size(); i++) {
                 if (expression.getSignature().get(i).getToken().equals(Token.TK_ID)
-                        && expression.getSignature().get(i + 1).getToken().equals(Token.TK_AP)) {
+                        && expression.getSignature().get(i + 1).getToken().equals(Token.TK_AP)) 
+                {
                     ArrayList<Lexema> listParams = new ArrayList<>();
                     ArrayList<Lexema> listParamsTypes = new ArrayList<>();
-                    Semantic sintaxiFun = getVarFunDec(startIndex, i, expression.getSignature().get(i));
+                    Semantic sintaxiFun = getVarFunDec(startIndex, expression.getSignature().get(i).getIndex(), expression.getSignature().get(i));
                     int j;
+                    int canValidate = 0;
 
-                    for (j = i; j < expression.getSignature().size()
-                            && expression.getSignature().get(j).getLexema().equals(")"); j++) {
+                    if(sintaxiFun != null)
+                        for (Lexema item : sintaxiFun.getSignature()) {
+                            if(Arrays.asList("int", "float", "double", "char").contains(item.getLexema())) {
+                                if(canValidate > 0) {
+                                    listParamsTypes.add(item);
+                                }else {
+                                    canValidate++;
+                                }
+                            }
+                        }
+                  
+                    for (j = i + 1; j < expression.getSignature().size()
+                            && !expression.getSignature().get(j).getLexema().equals(")"); j++) {
 
                         if (!expression.getSignature().get(j).getLexema().equals("(")
-                                && !expression.getSignature().get(j).equals(")")
-                                && !expression.getSignature().get(j).equals(","))
+                                && !expression.getSignature().get(j).getLexema().equals(")")
+                                && !expression.getSignature().get(j).getLexema().equals(",")) {
                             listParams.add(expression.getSignature().get(j));
+                        }
+                    }
+
+                    if(listParams.size() != listParamsTypes.size()) {
+                        erros.add("Numero de parametros incompativeis na linha: " + expression.getSignature().get(i).getLine());
+                    }else {
+                        for(int y = 0; y < listParams.size() ; y++) {
+                            if(listParamsTypes.get(y).getLexema().equals("int") && listParams.get(y).getToken() != Token.TK_NI){
+                                this.erros.add("Esperava receber um inteiro no parametro nº "+ (y + 1) +" da funcao "+ expression.getSignature().get(i).getLexema() +" na linha: " + expression.getSignature().get(j).getLine());
+                            }
+
+                            if(listParamsTypes.get(y).getLexema().equals("float") && listParams.get(y).getToken() != Token.TK_NF || 
+                                listParamsTypes.get(y).getLexema().equals("float") && listParams.get(y).getToken() != Token.TK_NI
+                            ){
+                                this.erros.add("Esperava receber um float no prametro nº "+ (y + 1) +" da funcao "+ expression.getSignature().get(i).getLexema() +" na linha: " + expression.getSignature().get(j).getLine());
+                            }
+
+                            if(listParamsTypes.get(y).getLexema().equals("double") && listParams.get(y).getToken() != Token.TK_NF || 
+                                listParamsTypes.get(y).getLexema().equals("double") && listParams.get(y).getToken() != Token.TK_NI
+                            ){
+                                this.erros.add("Esperava receber um double no prametro nº "+ (y + 1) +" da funcao "+ expression.getSignature().get(i).getLexema() +" na linha: " + expression.getSignature().get(j).getLine());
+                            }
+                            
+                            if(listParamsTypes.get(y).getLexema().equals("char") && listParams.get(y).getToken() != Token.TK_CH){
+                                this.erros.add("Esperava receber um char no prametro nº "+ (y + 1) +" da funcao "+ expression.getSignature().get(i).getLexema() +" na linha: " + expression.getSignature().get(j).getLine());
+                            }
+                        }
                     }
 
                     i = j;
