@@ -34,7 +34,6 @@ public class Main {
                 printLexemas();
             }
         }
-
     }
 
     private static void sintaticAnalex() {

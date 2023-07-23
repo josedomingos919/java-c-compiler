@@ -1,4 +1,4 @@
-/** Inicio **/
+
 <programa>      ::=     <decl_list>
 <decl_list>     ::=     <decl>
 <decl>          ::=     <type_spec>ID<decl_1>
@@ -19,7 +19,7 @@
                         "int"   |
                         "double"
 
-<fun_decl_1>    ::=     ";"|
+<fun_decl_1>    ::=     ";"     |
                         <com_stmt>
 
 <params>        ::=     "void"  |

@@ -10,5 +10,5 @@ int main() {
 
     float f = 3.4;
 
-    soma('\n', 'd');
+    soma('\n', 7);
 }
