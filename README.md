@@ -53,7 +53,7 @@ A análise léxica também conhecida como **Scanner** é quando o compilador peg
 Aqui tem a saída do meu compilador para um analise léxica do código:
 
 ```
- #include <stdio.h>
+#include <stdio.h>
 
 int main() {
 	int a = 1 + 3;
@@ -105,7 +105,7 @@ A analise semântica é a fase responsável por verificar se o código escrito o
 Ex.:
 
 ```
- #include <stdio.h>
+#include <stdio.h>
 
 int main() {
     soma("Teste", 8484);
