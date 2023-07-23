@@ -13,7 +13,7 @@ Para a criação deste compilador utilizamos seguintes fundamentos:
 3.  **Análise Léxica ( 1º fase de um compilador )**
 4.  **Analise Sintática ( 2º fase de um compilador )**
     1. Gramática Livre de Contexto ( Top-Down )
-    2. Técnica de Detenção de Erro ( Modo Penico )
+    2. Técnica de Detenção de Erro ( Modo Pánico )
     3. Tokens de Sincronização
     4. Técnica de derivação ( First - Flow )
 5.  **Analise Semântica ( 3º fase de um compilador )**
