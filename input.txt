@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-int main() {
-    int a = 3;
-    /* Hello my compiler */
+int main( {
+    int k = 3 int b = 0;
+    int a teste = 8;
     return 0;
 }
