@@ -1,14 +1,7 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-int soma(int a, char b) {
-    return a+b;
-}
-
-int main() {  
-    int s = '\n';
-
-    float f = 3.4;
-
-    soma('\n', 7);
+int main() {
+    int a = 3;
+    /* Hello my compiler */
+    return 0;
 }
