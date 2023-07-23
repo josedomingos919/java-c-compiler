@@ -96,7 +96,7 @@ return 0;
 A analise semântica é a fase responsável por verificar se o código escrito obedece a regra semântica da linguagem no caso uma variável do tipo inteiro não pode receber um valor do tipo string, uma função que que recebe um parâmetro do tipo string não pode ser passado um int como argumento, o numero de argumento de de uma função tem que ser garantido na sua chamada. Para a implementação da fase semântica utilizei uma tabela com assinatura de todas as declarações de variável, função e protótipos para no caso de uma ocorrência de uma chamada da função verificar se ela foi declarada ou se pode ser usada nesse escopo.
 
 Ex.:
-
+`
 #include <stdio.h>
 
 int main() {
@@ -112,6 +112,7 @@ soma("Teste", 8484);
 int soma(int a, int b) {
 return a + b;
 }
+`
 
 saída do analisador semântico:
 
