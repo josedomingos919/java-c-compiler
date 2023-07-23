@@ -1,7 +1,14 @@
 #include <stdio.h>
 
-int main( {
-    int k = 3 int b = 0;
-    int a teste = 8;
+int main() {
+    soma("Teste", 8484);
+    
+    int a = 4;
+    float b = a;
+
     return 0;
+}
+
+int soma(int a, int b) {
+    return a + b;
 }
