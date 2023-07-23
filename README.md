@@ -40,7 +40,7 @@ Ai tem alguns exemplos de expressões regulares que usamos, para validar algumas
 
 Para a criação do compilador o autómato a ser utlizado é o **#Autómato Finito Determinístico** Porque ele tem apenas um caminho para cada símbolo lido e ele não possui movimentos vazios! [Ler mais sobre autómatos](https://pt.wikipedia.org/wiki/M%C3%A1quina_de_estados_finitos_n%C3%A3o_determin%C3%ADstica) .
 
-Então esse foi o autómato que eu desenvolvi para o meu caso de estudo na ferramenta [https://www.jflap.org/](JFLAP):
+Então esse foi o autómato que eu desenvolvi para o meu caso de estudo na ferramenta [JFLAP](https://www.jflap.org/):
 
 <img alt="TPC - Autómato.jff.png" src="https://github.com/josedomingos919/java-c-compiler/blob/main/docs/TPC%20-%20Aut%C3%B3mato.jff.png?raw=true" data-hpc="true" class="Box-sc-g0xbh4-0 kzRgrI">
 
