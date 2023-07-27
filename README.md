@@ -13,7 +13,7 @@ Para a criação deste compilador utilizamos seguintes fundamentos:
 3.  **Análise Léxica ( 1º fase de um compilador )**
 4.  **Analise Sintática ( 2º fase de um compilador )**
     1. Gramática Livre de Contexto ( Top-Down )
-    2. Técnica de Detenção de Erro ( Modo Pánico )
+    2. Técnica de Detenção de Erro ( Modo Pânico )
     3. Tokens de Sincronização
     4. Técnica de derivação ( First - Flow )
 5.  **Analise Semântica ( 3º fase de um compilador )**
@@ -75,7 +75,7 @@ As gramáticas da linguagem de programação eles na sua maioria aparecem utiliz
 
 Nas gramáticas das linguagens de programação um símbolo pode ter vários caminhos para ajudar na representação visual ou na leitura, e muitos geradores de código eles removem essa ambiguidade porque pode gerar loop e eu também tive de resolver essas ambiguidades para poder implementar a primeira fase. [Ver minha gramática organizada](https://github.com/josedomingos919/java-c-compiler/blob/main/gramatica-organizada.xml)
 
-## **1.4.2 Técnica de Detenção de Erro ( Modo Penico )**
+## **1.4.2 Técnica de Detenção de Erro ( Modo Pânico )**
 
 Um compilador ao analisar o código ele não pode para a sua analise ele deve apresentar todos os erros encontrados até ao final do código, mas se no meio da sua Analise o compilador encontrar um erro ele não pode adivinhar o que o programador queria escrever:
 **ex.: int soma {}**  
