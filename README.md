@@ -4,7 +4,7 @@
 
 Compilador feito em linguagem Java para Compilar linguagem C.
 
-Durante o 3º Ano da minha licenciatura tive uma disciplina denominada **Compilador** onde formos orientado pelo [Dr. André Filemon](https://www.linkedin.com/in/andr%C3%A9-filemon-87863897/?originalSubdomain=ao) como se deve criar um compilador!
+Durante o 3º Ano da minha licenciatura tive uma disciplina denominada **Compilador** onde fomos orientado pelo [Dr. André Filemon](https://www.linkedin.com/in/andr%C3%A9-filemon-87863897/?originalSubdomain=ao) como se deve criar um compilador!
 
 Para a criação deste compilador utilizamos seguintes fundamentos:
 
